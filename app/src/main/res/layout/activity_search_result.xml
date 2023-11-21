@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchResult"
+    tools:context=".screens.SearchResult"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -20,7 +20,12 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        tools:listitem="@layout/row_layout_todo"
+        tools:listitem="@layout/row_layout_basic_search"
         android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/none_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
