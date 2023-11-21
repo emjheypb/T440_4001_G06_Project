@@ -16,6 +16,8 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
 
 
@@ -48,14 +50,28 @@ class SearchResult : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
+        // Retrieve the list of strings from SharedPreferences
+        val sharedPreferences = getSharedPreferences("FILTERED_LIST", MODE_PRIVATE)
+        val rentalPropertyStringList: String? = sharedPreferences.getString("FILTERED_LIST", "")
+
+        // Check if the string is not empty before attempting to deserialize
+        val filteredList: List<Rentals> = if (!rentalPropertyStringList.isNullOrEmpty()) {
+            Gson().fromJson(
+                rentalPropertyStringList,
+                object : TypeToken<List<Rentals>>() {}.type
+            )
+        } else {
+            emptyList()
+        }
+
         // Retrieve the list of strings from the intent
-        val rentalPropertyStringList: Array<String>? = intent.getStringArrayExtra("FILTERED_LIST")
+        //val rentalPropertyStringList: Array<String>? = intent.getStringArrayExtra("FILTERED_LIST")
 
         // Convert the list of strings back to a list of Rentals objects
-        val filteredList: List<Rentals> = rentalPropertyStringList?.mapNotNull {
+        //val filteredList: List<Rentals> = rentalPropertyStringList?.mapNotNull {
             // Convert each string back to a Rentals object
-            Rentals.fromJson(it)
-        } ?: emptyList()
+            //Rentals.fromJson(it)
+       // } ?: emptyList()
 
         // Initialize resultList with filteredList or an empty list
         resultList = filteredList.toMutableList()

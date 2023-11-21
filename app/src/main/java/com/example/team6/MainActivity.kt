@@ -12,6 +12,7 @@ import android.widget.PopupMenu
 import com.example.team6.models.ContactDetails
 import com.example.team6.models.PropertySpecifications
 import com.example.team6.models.Rentals
+import com.google.gson.Gson
 
 
 class MainActivity : AppCompatActivity() {
@@ -64,11 +65,6 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        // Initialize Shared Preferences
-        //this.sharedPreferences = getSharedPreferences("FILTERED_LIST", MODE_PRIVATE)
-        // Configure Shared Preferences in Editor Mode
-        //this.prefEditor = this.sharedPreferences.edit()
-
         // Search Handler with Button
         binding.search.setOnClickListener {
             // If you want to perform search when the button is clicked
@@ -104,13 +100,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Convert the list of Rentals objects to a list of JSON strings
-        val rentalPropertyStringList = filteredList.map {
-            it.toJson()
-        }
+        val rentalPropertyStringList = Gson().toJson(filteredList)
 
         // Open SearchResultActivity and pass the filtered list
         val intent = Intent(this, SearchResult::class.java)
-        intent.putExtra("FILTERED_LIST", rentalPropertyStringList.toTypedArray())
+        //intent.putExtra("FILTERED_LIST", rentalPropertyStringList.toTypedArray())
+
+        // Save filtered list to SharedPreferences
+        val sharedPreferences = getSharedPreferences("FILTERED_LIST", MODE_PRIVATE)
+        val prefEditor = sharedPreferences.edit()
+        prefEditor.putString("FILTERED_LIST", rentalPropertyStringList)
+        prefEditor.apply()
+
+        // Open SearchResultActivity
         startActivity(intent)
 
         Log.d("SearchLogic", "Filtered List Size: ${filteredList.size}")
