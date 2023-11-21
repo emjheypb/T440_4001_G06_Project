@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.team6.databinding.ActivitySearchResultBinding
 import com.example.team6.models.Rentals
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.PopupMenu
@@ -133,7 +134,11 @@ class SearchResult : AppCompatActivity() {
         val tvPropertyName: TextView = dialogView.findViewById(R.id.tvPropertyName)
         val tvDescription: TextView = dialogView.findViewById(R.id.tvDescription)
 
-        Picasso.get().load(property.imageURL).into(ivPropertyImage)
+        // Load the image using resource ID
+        val resources: Resources = ivPropertyImage.context.resources
+        val resourceId: Int = resources.getIdentifier(property.imageURL, "drawable", ivPropertyImage.context.packageName)
+        ivPropertyImage.setImageResource(resourceId)
+
         tvPropertyName.text = property.propertyName
         tvDescription.text = property.description
 
