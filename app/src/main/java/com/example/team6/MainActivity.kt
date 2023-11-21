@@ -79,9 +79,14 @@ class MainActivity : AppCompatActivity() {
             Log.d("SearchResult-Sent", "No search results found.")
         }
 
+        // Convert the list of Rentals objects to a list of JSON strings
+        val rentalPropertyStringList = filteredList.map {
+            it.toJson()
+        }
+
         // Open SearchResultActivity and pass the filtered list
         val intent = Intent(this, SearchResult::class.java)
-        intent.putExtra("FILTERED_LIST", ArrayList(filteredList))
+        intent.putExtra("FILTERED_LIST", rentalPropertyStringList.toTypedArray())
         startActivity(intent)
 
         Log.d("SearchLogic", "Filtered List Size: ${filteredList.size}")

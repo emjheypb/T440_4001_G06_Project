@@ -1,6 +1,7 @@
 package com.example.team6.models
 
 import android.util.Log
+import com.google.gson.Gson
 
 class Rentals (
     val propertyType: String,
@@ -23,6 +24,7 @@ class Rentals (
                         || city.contains(query, ignoreCase = true)
                         || address.contains(query, ignoreCase = true)
                         || postalCode.contains(query, ignoreCase = true)
+                        || ownerName.contains(query, ignoreCase = true)
                         || specifications.bedrooms == (queryNum)
                         || specifications.bathrooms == (queryNum)
                         || specifications.parkingLots == (queryNum)
@@ -38,6 +40,7 @@ class Rentals (
                         || city.contains(query, ignoreCase = true)
                         || address.contains(query, ignoreCase = true)
                         || postalCode.contains(query, ignoreCase = true)
+                        || ownerName.contains(query, ignoreCase = true)
             if(searchInstance){
                 Log.d("Rentals-Search", "Search Instance Existed for $query")
             } else {
@@ -46,4 +49,15 @@ class Rentals (
         return searchInstance
     }
 }
+    // Function to convert Rentals to JSON
+    fun toJson(): String {
+        return Gson().toJson(this)
+    }
+
+    companion object {
+        // Function to create Rentals from JSON
+        fun fromJson(json: String): Rentals {
+            return Gson().fromJson(json, Rentals::class.java)
+        }
+    }
 }
