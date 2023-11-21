@@ -39,7 +39,11 @@ class RentalsAdapter (
             holder.tvDetail.text = "${property.propertyType} ${property.specifications.bedrooms}B${property.specifications.bathrooms}B${property.specifications.parkingLots}P"
 
             // Load the image using Picasso
-            Picasso.get().load(property.imageURL).into(holder.tvPropertyImage)
+            val context = holder.itemView.context
+            val res = context.resources.getIdentifier(property.imageURL, "drawable", context.packageName)
+            val tvPropertyImage = holder.itemView.findViewById<ImageView>(R.id.tvPropertyImage)
+            tvPropertyImage.setImageResource(res)
+            //Picasso.get().load(property.imageURL).into(holder.tvPropertyImage)
             holder.ivShortlist.visibility = View.VISIBLE
             // Set click listener
             holder.itemView.setOnClickListener{

@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/tvPropertyImage"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_margin="8dp"
         android:scaleType="center"
         android:contentDescription="Property Image Goes Here" />
