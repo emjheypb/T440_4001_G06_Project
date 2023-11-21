@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         binding.loginRegisterButton.setOnClickListener {
             // Handle login/register button click
             // For now, open a dummy login screen
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 
