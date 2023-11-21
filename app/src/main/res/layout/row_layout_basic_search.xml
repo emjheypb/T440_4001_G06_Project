@@ -2,15 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:layout_gravity="center_vertical"
+    android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/tvRowLine1"
+        android:id="@+id/tvPropertyName"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:text="Todo data goes here"
         android:textSize="20sp"
         android:textColor="@color/black"
+        android:layout_weight="1"
+        />
+
+    <ImageView
+        android:id="@+id/ivShortlist"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_star"
+        android:visibility="gone"
         />
 
 </LinearLayout>

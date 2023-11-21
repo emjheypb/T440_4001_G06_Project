@@ -4,6 +4,7 @@ class RentalProperty(
     val propertyType: String,
     val ownerName: String,
     val ownerContactDetails: ContactDetails,
+    val propertyName: String,
     val specifications: PropertySpecifications,
     val description: String,
     val address: String,
