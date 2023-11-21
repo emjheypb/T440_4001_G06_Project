@@ -12,9 +12,9 @@ import com.squareup.picasso.Picasso
 
 
 class RentalsAdapter (
-    var rentals: MutableList<Rentals>) : RecyclerView.Adapter<RentalsAdapter.RentalsViewHolder>() {
-
-
+    var rentals: MutableList<Rentals>,
+    private val itemClickListener: (position: Int) -> Unit,
+) : RecyclerView.Adapter<RentalsAdapter.RentalsViewHolder>() {
         inner class RentalsViewHolder(itemView: View) : RecyclerView.ViewHolder (itemView) {
             val tvPropertyName: TextView = itemView.findViewById(R.id.tvPropertyName)
             val tvPropertyImage: ImageView = itemView.findViewById(R.id.tvPropertyImage)
@@ -40,6 +40,10 @@ class RentalsAdapter (
             // Load the image using Picasso
             Picasso.get().load(property.imageURL).into(holder.tvPropertyImage)
             holder.ivShortlist.visibility = View.VISIBLE
+            // Set click listener
+            holder.itemView.setOnClickListener{
+                itemClickListener.invoke(position)
+            }
         }
 
     }

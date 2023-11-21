@@ -20,16 +20,11 @@ class SearchResult : AppCompatActivity() {
         setContentView(binding.root)
 
         // Retrieve the list of strings from the intent
-        val rentalPropertyStringList: ArrayList<String>? = intent.getStringArrayListExtra("FILTERED_LIST")
+        val rentalList = intent.getSerializableExtra("FILTERED_LIST")as? ArrayList<Rentals>
 
-        // Convert the list of strings back to a list of RentalProperty objects
-        val filteredList: List<Rentals> = rentalPropertyStringList?.mapNotNull {
-            // Convert each string back to a RentalProperty object
-            Rentals.fromBundleList(it)
-        } ?: emptyList()
+        // Initialize resultList with rentalList or an empty list
+        resultList = rentalList?.toMutableList() ?: mutableListOf()
 
-// Initialize resultList with filteredList or an empty list
-        resultList = filteredList.toMutableList()
         // Setup RecyclerView
         setupRecyclerView()
 

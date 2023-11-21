@@ -13,9 +13,8 @@ import com.example.team6.models.Rentals
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    lateinit var sharedPreferences: SharedPreferences
-    lateinit var prefEditor: SharedPreferences.Editor
-
+    //lateinit var sharedPreferences: SharedPreferences
+    //lateinit var prefEditor: SharedPreferences.Editor
     private var datasource:MutableList<Rentals> = mutableListOf<Rentals>(
         Rentals(propertyType = "Condo",
     ownerName = "Meridian Condo",
@@ -55,16 +54,14 @@ class MainActivity : AppCompatActivity() {
     ),
         )
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         // Initialize Shared Preferences
-        this.sharedPreferences = getSharedPreferences("FILTERED_LIST", MODE_PRIVATE)
+        //this.sharedPreferences = getSharedPreferences("FILTERED_LIST", MODE_PRIVATE)
         // Configure Shared Preferences in Editor Mode
-        this.prefEditor = this.sharedPreferences.edit()
+        //this.prefEditor = this.sharedPreferences.edit()
 
         // Search Handler with Button
         binding.search.setOnClickListener {
@@ -76,24 +73,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun performSearch(query: String) {
         val filteredList = datasource.filter {
-            it.propertyName.contains(query, ignoreCase = true)
-                    || it.city.contains(query, ignoreCase = true)
-                    || it.address.contains(query, ignoreCase = true)
-                    || it.postalCode.contains(query, ignoreCase = true)
-        }
+            it.searchAble(query) }
 
         if (filteredList.isEmpty()) {
             Log.d("SearchResult-Sent", "No search results found.")
         }
 
-        // Convert the list of RentalProperty objects to a list of strings
-        val rentalPropertyStringList = filteredList.map {
-            it.toBundleList()
-        }
-
         // Open SearchResultActivity and pass the filtered list
         val intent = Intent(this, SearchResult::class.java)
-        intent.putExtra("FILTERED_LIST", rentalPropertyStringList.toTypedArray())
+        intent.putExtra("FILTERED_LIST", ArrayList(filteredList))
         startActivity(intent)
 
         Log.d("SearchLogic", "Filtered List Size: ${filteredList.size}")
