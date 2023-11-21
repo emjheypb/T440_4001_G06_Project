@@ -36,7 +36,8 @@ class RentalsAdapter (
             // Bind property details to respective TextViews
             val property = rentals[position]
             holder.tvPropertyName.text = property.propertyName
-            holder.tvDetail.text = property.description
+            holder.tvDetail.text = "${property.propertyType} ${property.specifications.bedrooms}B${property.specifications.bathrooms}B${property.specifications.parkingLots}P"
+
             // Load the image using Picasso
             Picasso.get().load(property.imageURL).into(holder.tvPropertyImage)
             holder.ivShortlist.visibility = View.VISIBLE

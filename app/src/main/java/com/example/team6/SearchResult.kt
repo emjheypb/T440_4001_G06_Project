@@ -1,5 +1,6 @@
 package com.example.team6
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,6 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.team6.databinding.ActivitySearchResultBinding
 import com.example.team6.models.Rentals
 import android.content.SharedPreferences
+import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.PopupMenu
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import com.squareup.picasso.Picasso
 
 
 class SearchResult : AppCompatActivity() {
@@ -18,6 +26,26 @@ class SearchResult : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
+
+        // Set up click listeners for toolbar items
+        binding.menuIcon.setOnClickListener {
+            // Handle menu icon click
+            showPopupMenu(it)
+        }
+
+        binding.teamNameTextView.setOnClickListener {
+            // Handle team name click (redirect or refresh to MainActivity)
+            startActivity(Intent(this, MainActivity::class.java))
+            finish() // Optional: finish the current activity to clear it from the stack
+        }
+
+        binding.loginRegisterButton.setOnClickListener {
+            // Handle login/register button click
+            // For now, open a dummy login screen
+            startActivity(Intent(this, MainActivity::class.java))
+        }
 
         // Retrieve the list of strings from the intent
         val rentalPropertyStringList: Array<String>? = intent.getStringArrayExtra("FILTERED_LIST")
@@ -39,6 +67,35 @@ class SearchResult : AppCompatActivity() {
             // Handle item click, e.g., show more details
             showDetails(resultList[position])
         }
+    }
+
+
+    // Add the following method to show PopupMenu
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.inflate(R.menu.options_menu_items)
+
+        // Set up click listener for each menu item
+        popupMenu.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.mi_shortlisted -> {
+                    // Handle Shortlisted Listings click
+                    // For now, open a dummy shortlisted screen
+                    startActivity(Intent(this, MainActivity::class.java))
+                    true
+                }
+                R.id.mi_addListings -> {
+                    // Handle Post Listings click
+                    // For now, open a dummy post listings screen
+                    startActivity(Intent(this, MainActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Show the PopupMenu
+        popupMenu.show()
     }
 
     private fun setupRecyclerView() {
@@ -65,7 +122,54 @@ class SearchResult : AppCompatActivity() {
     }
 
     private fun showDetails(property: Rentals) {
-        // Implement logic to show more details for the selected property
-        // For example, you can start a new activity or show a dialog with property details
+        // Initialize
+        val dialogBuilder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_rental_details, null)
+        dialogBuilder.setView(dialogView)
+
+        // Set data to image, property name, and description
+        val ivPropertyImage: ImageView = dialogView.findViewById(R.id.ivPropertyImage)
+        val tvPropertyName: TextView = dialogView.findViewById(R.id.tvPropertyName)
+        val tvDescription: TextView = dialogView.findViewById(R.id.tvDescription)
+
+        Picasso.get().load(property.imageURL).into(ivPropertyImage)
+        tvPropertyName.text = property.propertyName
+        tvDescription.text = property.description
+
+        // Set data to specifications
+        val tvBedrooms: TextView = dialogView.findViewById(R.id.tvBedrooms)
+        val tvBathrooms: TextView = dialogView.findViewById(R.id.tvBathrooms)
+        val tvParkingLots: TextView = dialogView.findViewById(R.id.tvParkingLots)
+
+        val tvBedroomsText = property.specifications.bedrooms.toString() + " Beds"
+        val tvBathroomsText = property.specifications.bathrooms.toString() + " Baths"
+        val tvParkingLotsText = property.specifications.parkingLots.toString() + " Parking"
+
+        tvBedrooms.text = tvBedroomsText
+        tvBathrooms.text = tvBathroomsText
+        tvParkingLots.text = tvParkingLotsText
+
+        // Set owner information
+        val tvOwnerInfo: TextView = dialogView.findViewById(R.id.tvOwnerInfo)
+        tvOwnerInfo.text = "Owner: ${property.ownerName}\nContact: ${property.ownerContactDetails.email}, ${property.ownerContactDetails.phoneNumber}"
+
+        // Set shortlist click listener
+        val ivShortlistDialog: ImageView = dialogView.findViewById(R.id.ivShortlistDialog)
+        ivShortlistDialog.setOnClickListener {
+            // Handle shortlist logic here
+            // You can add the property to the shortlist
+            // and update the UI accordingly
+            Toast.makeText(
+                this,
+                "${property.propertyName} Added to Shortlist}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
+
+
     }
-}
+    }

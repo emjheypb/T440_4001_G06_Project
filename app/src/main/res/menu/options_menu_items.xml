@@ -3,9 +3,9 @@
     <item
         android:id="@+id/mi_shortlisted"
         android:orderInCategory="100"
-        android:title="Show Next page" />
+        android:title="Shortlisted Listings" />
     <item
         android:id="@+id/mi_addListings"
         android:orderInCategory="100"
-        android:title="Add Fruit" />
+        android:title="Post Listings" />
 </menu>

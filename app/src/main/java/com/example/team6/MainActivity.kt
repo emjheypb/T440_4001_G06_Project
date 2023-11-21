@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import com.example.team6.databinding.ActivityMainBinding
 import android.content.SharedPreferences
+import android.view.MenuItem
+import android.view.View
+import android.widget.PopupMenu
 import com.example.team6.models.ContactDetails
 import com.example.team6.models.PropertySpecifications
 import com.example.team6.models.Rentals
@@ -19,10 +22,10 @@ class MainActivity : AppCompatActivity() {
         Rentals(propertyType = "Condo",
     ownerName = "Meridian Condo",
     ownerContactDetails = ContactDetails("owner1@example.com", "123-456-7890"),
-    imageURL = "https://shared-s3.property.ca/public/images/buildings/993/park-lane-2-3-pemberton-ave-normal-5da8a8528c9ff9.14275300.jpg",
+    imageURL = "@drawable/rentals1",
     propertyName = "10 Northtown Way, North York, M2N7L4",
-    specifications = PropertySpecifications(3, 2, 2),
-    description = "A beautiful house for rent",
+    specifications = PropertySpecifications(3, 1, 1),
+    description = "The apartments offer large one and two-bedroom suites for rent with sizes ranging from 650 sq. ft. to 850 sq. ft. which is ample space for your living needs.  The apartments feature dishwashers and in suite laundry making it ideal for saving you time. There is vinyl and tile flooring throughout the unit.",
     address = "10 Northtown Way",
     postalCode = "M2N7L4",
     city = "North York",
@@ -32,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         ownerName = "Meridian Condo",
         ownerContactDetails = ContactDetails("owner1@example.com", "123-456-7890"),
         propertyName = "15 Northtown Way, North York, M2N7L4",
-        imageURL = "https://shared-s3.property.ca/public/images/buildings/9211/eleven-altamont-towns-11-altamont-rd-normal-60958d3242ef51.39708519.jpeg",
+        imageURL = "@drawable/rentals2",
         specifications = PropertySpecifications(3, 2, 2),
         description = "A beautiful house for rent",
         address = "15 Northtown Way",
@@ -44,9 +47,9 @@ class MainActivity : AppCompatActivity() {
         ownerName = "Meridian Condo",
         ownerContactDetails = ContactDetails("owner1@example.com", "123-456-7890"),
         propertyName = "25 Northtown Way, North York, M2N7L4",
-        imageURL = "https://shared-s3.property.ca/public/images/buildings/366/meridian-7-15-greenview-ave-272-274-duplex-ave-normal-1.jpg",
-        specifications = PropertySpecifications(3, 2, 2),
-        description = "A beautiful house for rent",
+        imageURL = "@drawable/rentals3",
+        specifications = PropertySpecifications(3, 3, 0),
+        description = "Located close to downtown and the stunning waterfront Cunard Apartments (Lowrise) are located in a highly desirable area in Toronto, North York. The apartments are perfectly catered to a wide range of residents from working professionals to families to everyone in between.",
         address = "25 Northtown Way",
         postalCode = "M2N7L4",
         city = "North York",
@@ -58,6 +61,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
+
         // Initialize Shared Preferences
         //this.sharedPreferences = getSharedPreferences("FILTERED_LIST", MODE_PRIVATE)
         // Configure Shared Preferences in Editor Mode
@@ -68,6 +74,24 @@ class MainActivity : AppCompatActivity() {
             // If you want to perform search when the button is clicked
             val searchText = binding.searchBarEditText.text.toString().trim()
             performSearch(searchText)
+        }
+
+        // Set up click listeners for toolbar items
+        binding.menuIcon.setOnClickListener {
+            // Handle menu icon click
+            showPopupMenu(it)
+        }
+
+        binding.teamNameTextView.setOnClickListener {
+            // Handle team name click (redirect or refresh to MainActivity)
+            startActivity(Intent(this, MainActivity::class.java))
+            finish() // Optional: finish the current activity to clear it from the stack
+        }
+
+        binding.loginRegisterButton.setOnClickListener {
+            // Handle login/register button click
+            // For now, open a dummy login screen
+            startActivity(Intent(this, MainActivity::class.java))
         }
     }
 
@@ -91,5 +115,33 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("SearchLogic", "Filtered List Size: ${filteredList.size}")
         Log.d("SearchLogic", "Sample Data: ${filteredList.take(3)}")
+    }
+
+    // Add the following method to show PopupMenu
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.inflate(R.menu.options_menu_items)
+
+        // Set up click listener for each menu item
+        popupMenu.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.mi_shortlisted -> {
+                    // Handle Shortlisted Listings click
+                    // For now, open a dummy shortlisted screen
+                    startActivity(Intent(this, MainActivity::class.java))
+                    true
+                }
+                R.id.mi_addListings -> {
+                    // Handle Post Listings click
+                    // For now, open a dummy post listings screen
+                    startActivity(Intent(this, MainActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Show the PopupMenu
+        popupMenu.show()
     }
 }

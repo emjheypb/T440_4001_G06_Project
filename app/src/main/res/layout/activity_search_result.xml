@@ -5,21 +5,69 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".screens.SearchResult"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
+
+    <!-- Toolbar for Options Menu -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary">
+
+        <!-- Left Side - App Name -->
+        <TextView
+            android:id="@+id/teamNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Team 6"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_vertical"/>
+
+        <!-- Right Side - Log-In/Register Button and Menu Icon -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/loginRegisterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Log-In/Register"
+                android:layout_gravity="center_vertical"
+                android:backgroundTint="#FFC107"/>
+
+            <ImageView
+                android:id="@+id/menuIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_menu"
+                app:tint="@color/white"
+                android:contentDescription="menu"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center_vertical" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Search Result"
         android:textSize="24sp"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:textAlignment="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         tools:listitem="@layout/row_layout_basic_search"
         android:layout_weight="1"/>
 
