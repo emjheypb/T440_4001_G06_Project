@@ -69,6 +69,10 @@ class MainActivity : AppCompatActivity() {
             val searchText = binding.searchBarEditText.text.toString().trim()
             performSearch(searchText)
         }
+        binding.loginRegisterButton.setOnClickListener{
+            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun performSearch(query: String) {

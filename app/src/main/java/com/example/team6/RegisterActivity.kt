@@ -2,11 +2,13 @@ package com.example.team6
 
 import android.R
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import com.example.team6.databinding.ActivityRegisterBinding
 import com.example.team6.models.user
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -58,6 +60,8 @@ class RegisterActivity : AppCompatActivity() {
             this.prefEditor.putString("USER_LIST", listAsString)
             this.prefEditor.apply()
         }
-        this.binding.tvError.setText("USER REGISTERED SUCCESSFULLY")
+        val snackbar  = Snackbar.make(binding.root, "REGISTERED SUCCESSFULLY", Snackbar.LENGTH_SHORT)
+        snackbar.show()
+        Handler().postDelayed(Runnable { finish() }, 2000)
     }
 }
