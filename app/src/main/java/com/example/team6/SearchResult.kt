@@ -10,6 +10,7 @@ import com.example.team6.databinding.ActivitySearchResultBinding
 import com.example.team6.models.Rentals
 import android.content.SharedPreferences
 import android.content.res.Resources
+import android.os.Handler
 import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
@@ -17,6 +18,9 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.team6.enums.SharedPrefRef
+import com.example.team6.models.User
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
@@ -25,6 +29,8 @@ import com.squareup.picasso.Picasso
 class SearchResult : AppCompatActivity() {
     private lateinit var binding: ActivitySearchResultBinding
     private lateinit var resultList: MutableList<Rentals>
+    lateinit var sharedPreferences: SharedPreferences
+    lateinit var prefEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,9 +58,9 @@ class SearchResult : AppCompatActivity() {
         }
 
         // Retrieve the list of strings from SharedPreferences
-        val sharedPreferences = getSharedPreferences("MY_APP_PREFS", MODE_PRIVATE)
+        this.sharedPreferences = getSharedPreferences("MY_APP_PREFS", MODE_PRIVATE)
         val rentalPropertyStringList: String? = sharedPreferences.getString("FILTERED_LIST", "")
-        Log.d("SearchResult", "Filtered List from SharedPreferences: $rentalPropertyStringList")
+        this.prefEditor = sharedPreferences.edit()
 
         // Check if the string is not empty before attempting to deserialize
         val filteredList: List<Rentals> = if (!rentalPropertyStringList.isNullOrEmpty()) {
@@ -119,12 +125,10 @@ class SearchResult : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         binding.rv.layoutManager = LinearLayoutManager(this)
-        val myAdapter = RentalsAdapter(resultList) { position ->
+        binding.rv.adapter = RentalsAdapter(resultList) { position ->
             // Handle item click here, if needed
             showDetails(resultList[position])
         }
-        binding.rv.adapter = myAdapter
-        myAdapter.notifyDataSetChanged() // Add this line
     }
 
     private fun RecyclerView.addOnItemClickListener(onClickListener: (position: Int, view: View) -> Unit) {
@@ -177,20 +181,52 @@ class SearchResult : AppCompatActivity() {
 
         // Set owner information
         val tvOwnerInfo: TextView = dialogView.findViewById(R.id.tvOwnerInfo)
-        tvOwnerInfo.text = "Owner: ${property.ownerName}\nContact: ${property.ownerContactDetails.email}, ${property.ownerContactDetails.phoneNumber}"
+        tvOwnerInfo.text = "Owner: ${property.owner.name}\nContact: ${property.owner.email}, ${property.owner.phoneNumber}"
 
         // Set shortlist click listener
         val ivShortlistDialog: ImageView = dialogView.findViewById(R.id.ivShortlistDialog)
         ivShortlistDialog.setOnClickListener {
-            // Handle shortlist logic here
-            Toast.makeText(
-                this,
-                "${property.propertyName} Added to Shortlist}",
-                Toast.LENGTH_SHORT
-            ).show()
+            //validate if user is logged in, if yes then update the sharedpref to save the property in favorites
+            val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+            Log.d("LOGGED IN?", "$isLoggedIn")
+            if(isLoggedIn){
+                val gson = Gson()
+                val loggedInUserFromSP = sharedPreferences.getString("LOGGED_IN_USER", "")
+                val loggedInUser : User = gson.fromJson(loggedInUserFromSP, User::class.java)
 
-            // Update the ImageView to show the filled star icon
-            ivShortlistDialog.setImageResource(R.drawable.ic_star_filled)
+                val userListFromSP = sharedPreferences.getString("USER_LIST", "")
+                val typeToken = object : TypeToken<MutableList<User>>(){}.type
+                val userList = gson.fromJson<MutableList<User>>(userListFromSP, typeToken)
+
+                for(u in userList){
+                    if(u.email==loggedInUser.email) {
+                        u.rentalFavs.add(property)
+                        loggedInUser.rentalFavs.add(property)
+                        break
+                    }
+                }
+                val loggedInUserUpdated = gson.toJson(loggedInUser)
+                this.prefEditor.putString("LOGGED_IN_USER", loggedInUserUpdated)
+                val userListUpdated = gson.toJson(userList)
+                this.prefEditor.putString("USER_LIST", userListUpdated)
+                this.prefEditor.apply()
+                Toast.makeText(
+                    this,
+                    "${property.propertyName} Added to Favorites!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else{
+                Toast.makeText(
+                    this,
+                    "LOGIN TO SHORTLIST!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Handler().postDelayed(Runnable {
+                    startActivity(Intent(this, LoginActivity::class.java))
+                }, 2000)
+            }
+
         }
 
         val alertDialog = dialogBuilder.create()

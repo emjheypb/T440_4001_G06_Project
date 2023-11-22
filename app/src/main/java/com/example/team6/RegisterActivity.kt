@@ -7,6 +7,7 @@ import android.os.Handler
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.example.team6.databinding.ActivityRegisterBinding
+import com.example.team6.enums.MembershipType
 import com.example.team6.models.User
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
@@ -16,7 +17,7 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var binding: ActivityRegisterBinding
     lateinit var sharedPreferences: SharedPreferences
     lateinit var prefEditor: SharedPreferences.Editor
-    val membershipList: List<String> = listOf("Tenant", "Landlord")
+    val membershipList: List<String> = listOf(MembershipType.TENANT.description, MembershipType.LANDLORD.description)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +36,14 @@ class RegisterActivity : AppCompatActivity() {
         this.binding.tvError.setText("")
         val name = this.binding.etName.text.toString()
         val email = this.binding.etEmail.text.toString()
+        val phoneNumber = "" // TODO: replace with EditText
         val password = this.binding.etPassword.text.toString()
         val membership = membershipList.get(this.binding.spinnerMembership.selectedItemPosition)
         if(name.isNullOrEmpty() || email.isNullOrEmpty() || password.isNullOrEmpty() || membership.isNullOrEmpty()){
             this.binding.tvError.setText("Error: All fields must be filled in!")
             return@registerUser
         }
-        val newUser = User(name, email, password, membership)
+        val newUser = User(name, email, phoneNumber, password, MembershipType.valueOf(membership.uppercase()), mutableListOf())
         val userListFromSP = sharedPreferences.getString("USER_LIST", "")
         if (userListFromSP != "") {
             // convert the string back into a fruit object
