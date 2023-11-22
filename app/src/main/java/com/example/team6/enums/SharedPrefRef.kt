@@ -6,5 +6,6 @@ enum class SharedPrefRef (val value: String) {
     USERS_LIST("USER_LIST"),
     PROPERTIES_LIST("PROPERTIES_LIST"),
     FILTERED_LIST("FILTERED_LIST"),
-    MY_LISTING("MY_LISTING");
+    MY_LISTING("MY_LISTING"),
+    IS_LOGGED_IN("IS_LOGGED_IN")
 }
