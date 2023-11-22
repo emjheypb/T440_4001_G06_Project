@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import com.example.team6.databinding.ActivityMainBinding
 import android.content.SharedPreferences
+import android.os.Handler
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
     lateinit var prefEditor: SharedPreferences.Editor
     private val gson = Gson()
+    private var clickCount = 0
 
     private val sampleLandlord = User("Meridian Condo", "meridian@rent.com","012-345-6789", "mer1d1an", MembershipType.LANDLORD, mutableListOf())
     private var datasource: MutableList<Rentals> = mutableListOf<Rentals>(
@@ -91,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         // Set up click listeners for toolbar items
         binding.menuIcon.setOnClickListener {
             // Handle menu icon click
-            showPopupMenu(it)
+            showPopupMenuOnClick(it)
         }
 
         binding.teamNameTextView.setOnClickListener {
@@ -102,10 +104,48 @@ class MainActivity : AppCompatActivity() {
 
         binding.loginRegisterButton.setOnClickListener {
             // Handle login/register button click
-            // For now, open a dummy login screen
+            handleLoginButtoncClick()
+        }
+    }
+
+    private fun handleLoginButtonClick() {
+        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+        Log.d("Login Status for loginRegisterButton", "$isLoggedIn")
+
+        if (isLoggedIn) {
+            // Update UI
+            binding.loginRegisterButton.text = "Logout"
+        } else {
+            // User is not logged in, open the login screen
+            binding.loginRegisterButton.text = "Login/Register"
             startActivity(Intent(this, LoginActivity::class.java))
         }
     }
+
+    private fun handleLoginButtoncClick() {
+        clickCount++
+        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+        Log.d("Login Status for loginRegisterButton", "$isLoggedIn")
+
+        if (!isLoggedIn && clickCount == 1) {
+            // First click
+            startActivity(Intent(this, LoginActivity::class.java))
+        } else if (isLoggedIn && clickCount == 2) {
+            // Second click, perform logout logic
+            clickCount = 0 // Reset click count for future clicks
+            sharedPreferences.edit().putBoolean("IS_LOGGED_IN", false).apply()
+            sharedPreferences.edit().remove(SharedPrefRef.CURRENT_USER.value).apply()
+
+            // Update UI
+            binding.loginRegisterButton.text = "Login/Register"
+            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, MainActivity::class.java))
+
+        }
+    }
+
+
+
 
     private fun performSearch(query: String) {
         val filteredList = datasource.filter {
@@ -138,10 +178,10 @@ class MainActivity : AppCompatActivity() {
         Log.d("SearchLogic", "Sample Data: ${filteredList.take(3)}")
     }
 
-    // Add the following method to show PopupMenu
-    private fun showPopupMenu(view: View) {
-        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
-        val popupMenu = PopupMenu(this, view)
+    // Logic to deal with PopupMenu with regard to login status
+    private fun showPopupMenu(view: View, isLoggedIn: Boolean) {
+        // Show the PopupMenu
+        if (isLoggedIn) { val popupMenu = PopupMenu(this, view)
         val user = gson.fromJson(this.sharedPreferences.getString(SharedPrefRef.CURRENT_USER.value, ""), User::class.java)
 
         if(user != null && user.membership == MembershipType.LANDLORD) {
@@ -181,10 +221,6 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
-        // Show the PopupMenu
-        if (isLoggedIn) {
-            val popupMenu = PopupMenu(this, view)
             // Rest of your code for inflating and handling menu items
             popupMenu.show()
         } else {
@@ -194,6 +230,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
     }
+
+    // Call this method when need to show PopupMenu
+    private fun showPopupMenuOnClick(view: View) {
+        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+        Log.d("PopUp Logged_IN","$isLoggedIn")
+        showPopupMenu(view, isLoggedIn)
+    }
+
+
 
     private fun refreshSamples() {
         val usersDS = sharedPreferences.getString(SharedPrefRef.USERS_LIST.value, "")
