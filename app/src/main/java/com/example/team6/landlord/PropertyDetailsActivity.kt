@@ -50,7 +50,7 @@ class PropertyDetailsActivity : AppCompatActivity() {
             } else {
                 property = intent.getSerializableExtra(ExtrasRef.CURR_PROPERTY.toString()) as Rentals
             }
-            position = intent.getIntExtra(ExtrasRef.ROW.toString(), 0)
+            position = intent.getIntExtra(ExtrasRef.ROW.toString(), -1)
 
             val propertyTypes = mutableListOf<String>()
             for(type in PropertyType.entries) {

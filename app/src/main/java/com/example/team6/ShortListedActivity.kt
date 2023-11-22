@@ -240,6 +240,7 @@ class ShortListedActivity : AppCompatActivity() {
                 in Landlord().menuItems -> {
                     if(item.itemId == R.id.mi_ll_logout) {
                         this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
+                        this.prefEditor.putBoolean("IS_LOGGED_IN", false)
                         this.prefEditor.apply()
                     }
                     startActivity(Intent(this, Landlord().redirect(item.itemId)))
