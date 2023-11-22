@@ -11,7 +11,8 @@ import com.example.team6.models.Rentals
 
 class ShortlistedAdapter(
     var rentals: MutableList<Rentals>,
-    private val itemClickListener: (position: Int) -> Unit
+    private val itemClickListener: (position: Int) -> Unit,
+    private val deleteButtonClickListener: (position: Int) -> Unit
 ) : RecyclerView.Adapter<ShortlistedAdapter.ShortlistedViewHolder>() {
 
     inner class ShortlistedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -45,6 +46,9 @@ class ShortlistedAdapter(
         // Set click listener for item click
         holder.itemView.setOnClickListener {
             itemClickListener.invoke(position)
+        }
+        holder.deleteButton.setOnClickListener{
+            deleteButtonClickListener.invoke(position)
         }
     }
 }

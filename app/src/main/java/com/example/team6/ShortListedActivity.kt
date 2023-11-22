@@ -16,6 +16,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.startActivity
 import com.example.team6.databinding.ActivityShortListedBinding
 import com.example.team6.enums.MembershipType
 import com.example.team6.enums.SharedPrefRef
@@ -86,10 +87,11 @@ class ShortListedActivity : AppCompatActivity() {
 
     private fun setupRecyclerView(rentalFavs:MutableList<Rentals>) {
         binding.rv.layoutManager = LinearLayoutManager(this)
-        binding.rv.adapter = ShortlistedAdapter(rentalFavs) { position ->
-            // Handle item click here, if needed
-            showDetails(rentalFavs[position])
-        }
+        binding.rv.adapter = ShortlistedAdapter(rentalFavs,
+            { position -> showDetails(rentalFavs[position]) },
+            { position -> removeFav(position)}
+        )
+
     }
 
     private fun RecyclerView.addOnItemClickListener(onClickListener: (position: Int, view: View) -> Unit) {
@@ -105,6 +107,38 @@ class ShortListedActivity : AppCompatActivity() {
                 // Implement if needed
             }
         })
+    }
+
+    private fun removeFav(position: Int){
+        val gson = Gson()
+        val loggedInUserFromSP = sharedPreferences.getString("LOGGED_IN_USER", "")
+        val loggedInUser : User = gson.fromJson(loggedInUserFromSP, User::class.java)
+
+        val userListFromSP = sharedPreferences.getString("USER_LIST", "")
+        val typeToken = object : TypeToken<MutableList<User>>(){}.type
+        val userList = gson.fromJson<MutableList<User>>(userListFromSP, typeToken)
+
+        for(u in userList){
+            if(u.email==loggedInUser.email) {
+                u.rentalFavs.removeAt(position)
+                loggedInUser.rentalFavs.removeAt(position)
+                break
+            }
+        }
+        val loggedInUserUpdated = gson.toJson(loggedInUser)
+        this.prefEditor.putString("LOGGED_IN_USER", loggedInUserUpdated)
+        val userListUpdated = gson.toJson(userList)
+        this.prefEditor.putString("USER_LIST", userListUpdated)
+        this.prefEditor.apply()
+        Toast.makeText(
+            this,
+            "Removed From Favorites!",
+            Toast.LENGTH_SHORT
+        ).show()
+        Handler().postDelayed(Runnable {
+            finish()
+            startActivity(Intent(this, ShortListedActivity::class.java))
+        }, 1000)
     }
 
     private fun showDetails(property: Rentals) {

@@ -237,9 +237,8 @@ class SearchResult : AppCompatActivity() {
                 ).show()
                 Handler().postDelayed(Runnable {
                     startActivity(Intent(this, LoginActivity::class.java))
-                }, 2000)
+                }, 1000)
             }
-
         }
 
         val alertDialog = dialogBuilder.create()

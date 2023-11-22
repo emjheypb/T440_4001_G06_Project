@@ -154,7 +154,6 @@ class MainActivity : AppCompatActivity() {
                     // Handle Shortlisted Listings click
                     // For now, open a dummy shortlisted screen
                     startActivity(Intent(this, ShortListedActivity::class.java))
-                    finish()
                     true
                 }
 

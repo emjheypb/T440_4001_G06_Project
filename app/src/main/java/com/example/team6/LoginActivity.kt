@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         prefEditor.apply()
                         val snackbar  = Snackbar.make(binding.root, "LOGIN SUCCESSFUL", Snackbar.LENGTH_SHORT)
                         snackbar.show()
-                        Handler().postDelayed(Runnable { finish() }, 2000)
+                        Handler().postDelayed(Runnable { finish() }, 1000)
                     } else {
                         this.binding.tvError.setText("Error: Password entered is incorrect")
                         return@login
