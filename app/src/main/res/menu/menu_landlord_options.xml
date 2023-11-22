@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/mi_ll_home"
+        android:orderInCategory="100"
+        android:title="Home"
+        android:icon="@drawable/round_other_houses_24"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/mi_ll_properties"
+        android:orderInCategory="100"
+        android:title="My Listing"
+        android:icon="@drawable/round_list_alt_24"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/mi_ll_short_list"
+        android:orderInCategory="100"
+        android:title="My Short List" />
+    <item
+        android:id="@+id/mi_ll_account"
+        android:orderInCategory="100"
+        android:title="My Account" />
+    <item
+        android:id="@+id/mi_ll_logout"
+        android:orderInCategory="100"
+        android:title="Logout" />
+</menu>

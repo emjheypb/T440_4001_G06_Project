@@ -1,13 +1,12 @@
 package com.example.team6.models
 
 import android.util.Log
+import com.example.team6.enums.PropertyType
 import com.google.gson.Gson
 
 class Rentals (
-    val propertyType: String,
-    val ownerID: String,
-    val ownerName: String,
-    val ownerContactDetails: ContactDetails,
+    val propertyType: PropertyType,
+    val owner: User,
     val propertyName: String,
     val imageURL: String,
     val specifications: PropertySpecifications,
@@ -25,7 +24,7 @@ class Rentals (
                         || city.contains(query, ignoreCase = true)
                         || address.contains(query, ignoreCase = true)
                         || postalCode.contains(query, ignoreCase = true)
-                        || ownerName.contains(query, ignoreCase = true)
+                        || owner.name.contains(query, ignoreCase = true)
                         || specifications.bedrooms == (queryNum)
                         || specifications.bathrooms == (queryNum)
                         || specifications.parkingLots == (queryNum)
@@ -41,7 +40,7 @@ class Rentals (
                         || city.contains(query, ignoreCase = true)
                         || address.contains(query, ignoreCase = true)
                         || postalCode.contains(query, ignoreCase = true)
-                        || ownerName.contains(query, ignoreCase = true)
+                        || owner.name.contains(query, ignoreCase = true)
             if(searchInstance){
                 Log.d("Rentals-Search", "Search Instance Existed for $query")
             } else {

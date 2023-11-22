@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Team6</string>
+    <string name="demo_text">The quick brown fox jumps over the lazy dog The quick brown fox jumps over the lazy dog The quick brown fox jumps over the lazy dog The quick brown fox jumps over the lazy dog The quick brown fox jumps over the lazy dog The quick brown fox jumps over the lazy dog The quick brown fox jumps over the lazy dog</string>
+    <string name="demo_title">Title Title Title Title Title Title Title</string>
 </resources>
