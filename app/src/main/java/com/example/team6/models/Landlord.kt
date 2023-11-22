@@ -2,7 +2,7 @@ package com.example.team6.models
 
 import com.example.team6.MainActivity
 import com.example.team6.R
-import com.example.team6.landlord.MyListing
+import com.example.team6.landlord.MyListingActivity
 
 class Landlord {
     val menuItems =
@@ -10,7 +10,7 @@ class Landlord {
     fun redirect(id: Int) : Class<*> {
         when(id) {
             menuItems[0] -> return MainActivity::class.java
-            menuItems[1] -> return MyListing::class.java
+            menuItems[1] -> return MyListingActivity::class.java
             menuItems[2] -> return MainActivity::class.java
             menuItems[3] -> return MainActivity::class.java
             menuItems[4] -> return MainActivity::class.java

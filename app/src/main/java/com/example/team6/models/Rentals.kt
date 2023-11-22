@@ -3,6 +3,7 @@ package com.example.team6.models
 import android.util.Log
 import com.example.team6.enums.PropertyType
 import com.google.gson.Gson
+import java.io.Serializable
 
 class Rentals (
     val propertyType: PropertyType,
@@ -15,7 +16,7 @@ class Rentals (
     val postalCode: String,
     val city: String,
     val isAvailableForRent: Boolean,
-) {
+) : Serializable {
     fun searchAble(query: String): Boolean {
         val queryNum = query.toIntOrNull()
         if(queryNum!=null){
