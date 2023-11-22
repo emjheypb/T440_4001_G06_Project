@@ -47,7 +47,7 @@ class SearchResult : AppCompatActivity() {
         // Set up click listeners for toolbar items
         binding.menuIcon.setOnClickListener {
             // Handle menu icon click
-            showPopupMenu(it)
+            showPopupMenuOnClick(it)
         }
 
         binding.teamNameTextView.setOnClickListener {
@@ -82,9 +82,9 @@ class SearchResult : AppCompatActivity() {
 
         // Convert the list of strings back to a list of Rentals objects
         //val filteredList: List<Rentals> = rentalPropertyStringList?.mapNotNull {
-            // Convert each string back to a Rentals object
-            //Rentals.fromJson(it)
-       // } ?: emptyList()
+        // Convert each string back to a Rentals object
+        //Rentals.fromJson(it)
+        // } ?: emptyList()
 
         // Initialize resultList with filteredList or an empty list
         resultList = filteredList.toMutableList()
@@ -99,17 +99,24 @@ class SearchResult : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        binding.loginRegisterButton.isVisible = !sharedPreferences.getBoolean(SharedPrefRef.IS_LOGGED_IN.value,false)
+        super.onResume()
+    }
+
 
     // Add the following method to show PopupMenu
     private fun showPopupMenu(view: View) {
         val popupMenu = PopupMenu(this, view)
-        val user = Gson().fromJson(this.sharedPreferences.getString(SharedPrefRef.CURRENT_USER.value, ""), User::class.java)
+        val user = Gson().fromJson(
+            this.sharedPreferences.getString(SharedPrefRef.CURRENT_USER.value, ""),
+            User::class.java
+        )
         if (user != null && user.membership == MembershipType.LANDLORD) {
             popupMenu.inflate(R.menu.menu_landlord_options)
         } else {
             popupMenu.inflate(R.menu.options_menu_items)
         }
-
         // Set up click listener for each menu item
         popupMenu.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
@@ -120,8 +127,7 @@ class SearchResult : AppCompatActivity() {
                     // Check for null before accessing user membership
                     if (isLoggedIn) {
                         startActivity(Intent(this, ShortListedActivity::class.java))
-                    }
-                    else {
+                    } else {
                         Toast.makeText(
                             this,
                             "LOGIN TO SHORTLIST!",
@@ -146,18 +152,15 @@ class SearchResult : AppCompatActivity() {
                     }, 1000)
                     true
                 }
-                R.id.mi_logout -> {
-                    this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
-                    this.prefEditor.putBoolean("IS_LOGGED_IN", false)
-                    this.prefEditor.apply()
 
-                    Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                R.id.mi_logout -> {
+                    // Handle Logout click
+                    handleLogout()
                     true
                 }
+
                 in Landlord().menuItems -> {
-                    if(item.itemId == R.id.mi_ll_logout) {
+                    if (item.itemId == R.id.mi_ll_logout) {
                         this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
                         this.prefEditor.putBoolean("IS_LOGGED_IN", false)
                         this.prefEditor.apply()
@@ -170,7 +173,6 @@ class SearchResult : AppCompatActivity() {
                 else -> false
             }
         }
-
         // Show the PopupMenu
         popupMenu.show()
     }
@@ -184,7 +186,8 @@ class SearchResult : AppCompatActivity() {
     }
 
     private fun RecyclerView.addOnItemClickListener(onClickListener: (position: Int, view: View) -> Unit) {
-        this.addOnChildAttachStateChangeListener(object : RecyclerView.OnChildAttachStateChangeListener {
+        this.addOnChildAttachStateChangeListener(object :
+            RecyclerView.OnChildAttachStateChangeListener {
             override fun onChildViewAttachedToWindow(view: View) {
                 view.setOnClickListener {
                     val holder = getChildViewHolder(view)
@@ -212,7 +215,11 @@ class SearchResult : AppCompatActivity() {
 
         // Load the image using resource ID
         val resources: Resources = ivPropertyImage.context.resources
-        val resourceId: Int = resources.getIdentifier(property.imageURL, "drawable", ivPropertyImage.context.packageName)
+        val resourceId: Int = resources.getIdentifier(
+            property.imageURL,
+            "drawable",
+            ivPropertyImage.context.packageName
+        )
         ivPropertyImage.setImageResource(resourceId)
 
         tvPropertyName.text = property.propertyName
@@ -233,14 +240,15 @@ class SearchResult : AppCompatActivity() {
 
         // Set owner information
         val tvOwnerInfo: TextView = dialogView.findViewById(R.id.tvOwnerInfo)
-        tvOwnerInfo.text = "Owner: ${property.owner.name}\nContact: ${property.owner.email}, ${property.owner.phoneNumber}"
+        tvOwnerInfo.text =
+            "Owner: ${property.owner.name}\nContact: ${property.owner.email}, ${property.owner.phoneNumber}"
 
         val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
         Log.d("LOGGED IN?", "$isLoggedIn")
 
-        if(isLoggedIn){
-            val btnContact : Button = dialogView.findViewById(R.id.btn_contact)
-            btnContact.isVisible=true
+        if (isLoggedIn) {
+            val btnContact: Button = dialogView.findViewById(R.id.btn_contact)
+            btnContact.isVisible = true
             btnContact.setOnClickListener {
                 Log.d("EMAIL", "Attempting to send mail")
                 val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
@@ -250,7 +258,7 @@ class SearchResult : AppCompatActivity() {
                     putExtra(Intent.EXTRA_TEXT, "Hi, I am interested in this property!")
                 }
 
-                if (emailIntent.resolveActivity(packageManager) != null){
+                if (emailIntent.resolveActivity(packageManager) != null) {
                     startActivity(emailIntent)
                 }
 
@@ -263,19 +271,19 @@ class SearchResult : AppCompatActivity() {
             //validate if user is logged in, if yes then update the sharedpref to save the property in favorites
 
 
-            if(isLoggedIn){
+            if (isLoggedIn) {
                 val gson = Gson()
                 val loggedInUserFromSP = sharedPreferences.getString("LOGGED_IN_USER", "")
-                val loggedInUser : User = gson.fromJson(loggedInUserFromSP, User::class.java)
+                val loggedInUser: User = gson.fromJson(loggedInUserFromSP, User::class.java)
 
                 val userListFromSP = sharedPreferences.getString("USER_LIST", "")
-                val typeToken = object : TypeToken<MutableList<User>>(){}.type
+                val typeToken = object : TypeToken<MutableList<User>>() {}.type
                 val userList = gson.fromJson<MutableList<User>>(userListFromSP, typeToken)
 
-                for(u in userList){
-                    if(u.email==loggedInUser.email) {
+                for (u in userList) {
+                    if (u.email == loggedInUser.email) {
                         // Initialize rentalFavs if it's null
-                        if(u.rentalFavs == null) {
+                        if (u.rentalFavs == null) {
                             u.rentalFavs = mutableListOf()
                         }
                         u.rentalFavs.add(property)
@@ -285,7 +293,10 @@ class SearchResult : AppCompatActivity() {
 
                         // Log the property name of the last item
                         lastItem?.let {
-                            Log.d("YourTag", "Last property added to rentalFavs for user ${u.email}: ${it.propertyName}")
+                            Log.d(
+                                "YourTag",
+                                "Last property added to rentalFavs for user ${u.email}: ${it.propertyName}"
+                            )
                         }
 
                         break
@@ -301,8 +312,7 @@ class SearchResult : AppCompatActivity() {
                     "${property.propertyName} Added to Favorites!",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
-            else{
+            } else {
                 Toast.makeText(
                     this,
                     "LOGIN TO SHORTLIST!",
@@ -319,4 +329,25 @@ class SearchResult : AppCompatActivity() {
 
 
     }
+
+    private fun showPopupMenuOnClick(view: View) {
+        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+        Log.d("PopUp Logged_IN", "$isLoggedIn")
+        if (isLoggedIn) {
+            showPopupMenu(view)
+        } else {
+            Toast.makeText(this, "Please log in to access this feature", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
     }
+
+    private fun handleLogout() {
+        this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
+        this.prefEditor.putBoolean("IS_LOGGED_IN", false)
+        this.prefEditor.apply()
+
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+}
