@@ -118,11 +118,14 @@ class MainActivity : AppCompatActivity() {
             Log.d("SearchResult-Sent", "No search results found.")
         }
 
+        // Clear previous search results from SharedPreferences
+        prefEditor.remove("FILTERED_LIST")
+        prefEditor.apply()
+
         // Convert the list of Rentals objects to a list of JSON strings
         val rentalPropertyStringList = Gson().toJson(filteredList)
 
         // Open SearchResultActivity and pass the filtered list
-        val intent = Intent(this, SearchResult::class.java)
         //intent.putExtra("FILTERED_LIST", rentalPropertyStringList.toTypedArray())
 
         // Save filtered list to SharedPreferences
@@ -130,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         prefEditor.apply()
 
         // Open SearchResultActivity
+        val intent = Intent(this, SearchResult::class.java)
         startActivity(intent)
 
         Log.d("SearchLogic", "Filtered List Size: ${filteredList.size}")

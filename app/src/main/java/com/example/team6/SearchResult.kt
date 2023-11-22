@@ -10,6 +10,7 @@ import com.example.team6.databinding.ActivitySearchResultBinding
 import com.example.team6.models.Rentals
 import android.content.SharedPreferences
 import android.content.res.Resources
+import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.PopupMenu
@@ -53,6 +54,7 @@ class SearchResult : AppCompatActivity() {
         // Retrieve the list of strings from SharedPreferences
         val sharedPreferences = getSharedPreferences("FILTERED_LIST", MODE_PRIVATE)
         val rentalPropertyStringList: String? = sharedPreferences.getString("FILTERED_LIST", "")
+        Log.d("SearchResult", "Filtered List from SharedPreferences: $rentalPropertyStringList")
 
         // Check if the string is not empty before attempting to deserialize
         val filteredList: List<Rentals> = if (!rentalPropertyStringList.isNullOrEmpty()) {
@@ -117,10 +119,12 @@ class SearchResult : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         binding.rv.layoutManager = LinearLayoutManager(this)
-        binding.rv.adapter = RentalsAdapter(resultList) { position ->
+        val myAdapter = RentalsAdapter(resultList) { position ->
             // Handle item click here, if needed
             showDetails(resultList[position])
         }
+        binding.rv.adapter = myAdapter
+        myAdapter.notifyDataSetChanged() // Add this line
     }
 
     private fun RecyclerView.addOnItemClickListener(onClickListener: (position: Int, view: View) -> Unit) {
@@ -179,13 +183,14 @@ class SearchResult : AppCompatActivity() {
         val ivShortlistDialog: ImageView = dialogView.findViewById(R.id.ivShortlistDialog)
         ivShortlistDialog.setOnClickListener {
             // Handle shortlist logic here
-            // You can add the property to the shortlist
-            // and update the UI accordingly
             Toast.makeText(
                 this,
                 "${property.propertyName} Added to Shortlist}",
                 Toast.LENGTH_SHORT
             ).show()
+
+            // Update the ImageView to show the filled star icon
+            ivShortlistDialog.setImageResource(R.drawable.ic_star_filled)
         }
 
         val alertDialog = dialogBuilder.create()
