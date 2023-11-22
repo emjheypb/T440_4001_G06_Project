@@ -7,7 +7,7 @@ import android.os.Handler
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.example.team6.databinding.ActivityRegisterBinding
-import com.example.team6.models.user
+import com.example.team6.models.User
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -41,20 +41,20 @@ class RegisterActivity : AppCompatActivity() {
             this.binding.tvError.setText("Error: All fields must be filled in!")
             return@registerUser
         }
-        val newUser = user(name, email, password, membership)
+        val newUser = User(name, email, password, membership)
         val userListFromSP = sharedPreferences.getString("USER_LIST", "")
         if (userListFromSP != "") {
             // convert the string back into a fruit object
             val gson = Gson()
-            val typeToken = object : TypeToken<List<user>>(){}.type
-            val userList = gson.fromJson<MutableList<user>>(userListFromSP, typeToken)
+            val typeToken = object : TypeToken<List<User>>(){}.type
+            val userList = gson.fromJson<MutableList<User>>(userListFromSP, typeToken)
             userList.add(newUser)
             val listAsString = gson.toJson(userList)
             this.prefEditor.putString("USER_LIST", listAsString)
             this.prefEditor.apply()
         }
         else{
-            val userList:MutableList<user> = mutableListOf(newUser)
+            val userList:MutableList<User> = mutableListOf(newUser)
             val gson = Gson()
             val listAsString = gson.toJson(userList)
             this.prefEditor.putString("USER_LIST", listAsString)

@@ -5,6 +5,7 @@ import com.google.gson.Gson
 
 class Rentals (
     val propertyType: String,
+    val ownerID: String,
     val ownerName: String,
     val ownerContactDetails: ContactDetails,
     val propertyName: String,
