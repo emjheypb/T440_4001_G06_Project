@@ -6,9 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import com.example.team6.R
 import com.example.team6.databinding.ActivityLoginBinding
-import com.example.team6.models.user
+import com.example.team6.models.User
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -52,8 +51,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val userListFromSP = sharedPreferences.getString("USER_LIST", "")
         if(userListFromSP!=""){
             val gson = Gson()
-            val typeToken = object : TypeToken<List<user>>(){}.type
-            val userList = gson.fromJson<List<user>>(userListFromSP, typeToken)
+            val typeToken = object : TypeToken<List<User>>(){}.type
+            val userList = gson.fromJson<List<User>>(userListFromSP, typeToken)
             var flag=false
             for(u in userList){
                 if(u.email==email) {
