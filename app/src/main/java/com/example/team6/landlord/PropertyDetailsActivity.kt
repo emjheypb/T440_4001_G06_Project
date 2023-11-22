@@ -168,10 +168,31 @@ class PropertyDetailsActivity : AppCompatActivity() {
     }
 
     private fun saveProperty(propertyToAdd: Rentals?, pos: Int) {
+        val currUser = gson.fromJson(
+            this.sharedPreferences.getString(
+                SharedPrefRef.CURRENT_USER.value,
+                null
+            ), User::class.java
+        )
         val propertiesDS = this.sharedPreferences.getString(SharedPrefRef.PROPERTIES_LIST.value, "")
+
         var myListings = mutableListOf<Rentals>()
         val typeToken = object : TypeToken<List<Rentals>>() {}.type
-        if (propertiesDS != "") myListings.addAll(gson.fromJson<List<Rentals>>(propertiesDS, typeToken).toMutableList())
+        if (propertiesDS != "") {
+            for (currProperty in gson.fromJson<List<Rentals>>(propertiesDS, typeToken)
+                .toMutableList()) {
+                if (currProperty.owner.email == currUser.email) myListings.add(currProperty)
+            }
+        }
+
+        val allToken = object : TypeToken<List<Rentals>>() {}.type
+        var allListings = gson.fromJson<List<Rentals>>(propertiesDS, allToken)
+            .toMutableList()
+        if (propertiesDS != "") {
+            for (i in allListings.size - 1 downTo 0) {
+                if (allListings[i].owner.email == currUser.email) allListings.removeAt(i)
+            }
+        }
 
         if (propertyToAdd == null) {
             myListings.removeAt(pos)
@@ -184,7 +205,9 @@ class PropertyDetailsActivity : AppCompatActivity() {
             }
         }
 
-        val myListingJSON = gson.toJson(myListings)
+        allListings.addAll(myListings)
+
+        val myListingJSON = gson.toJson(allListings)
         prefEditor.putString(SharedPrefRef.PROPERTIES_LIST.value, myListingJSON)
 
         prefEditor.apply()

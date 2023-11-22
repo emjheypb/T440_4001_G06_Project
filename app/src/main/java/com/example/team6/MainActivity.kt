@@ -236,7 +236,7 @@ class MainActivity : AppCompatActivity() {
                         this.prefEditor.apply()
                     }
                     startActivity(Intent(this, Landlord().redirect(item.itemId)))
-                    finish()
+//                    finish()
                     true
                 }
                 else -> false }}
