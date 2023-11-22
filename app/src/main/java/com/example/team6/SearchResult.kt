@@ -189,6 +189,7 @@ class SearchResult : AppCompatActivity() {
             //validate if user is logged in, if yes then update the sharedpref to save the property in favorites
             val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
             Log.d("LOGGED IN?", "$isLoggedIn")
+
             if(isLoggedIn){
                 val gson = Gson()
                 val loggedInUserFromSP = sharedPreferences.getString("LOGGED_IN_USER", "")
@@ -200,8 +201,20 @@ class SearchResult : AppCompatActivity() {
 
                 for(u in userList){
                     if(u.email==loggedInUser.email) {
+                        // Initialize rentalFavs if it's null
+                        if(u.rentalFavs == null) {
+                            u.rentalFavs = mutableListOf()
+                        }
                         u.rentalFavs.add(property)
                         loggedInUser.rentalFavs.add(property)
+                        // Retrieve the last item added to rentalFavs
+                        val lastItem = u.rentalFavs.lastOrNull()
+
+                        // Log the property name of the last item
+                        lastItem?.let {
+                            Log.d("YourTag", "Last property added to rentalFavs for user ${u.email}: ${it.propertyName}")
+                        }
+
                         break
                     }
                 }

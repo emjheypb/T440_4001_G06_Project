@@ -19,7 +19,7 @@ class RentalsAdapter (
             val tvPropertyName: TextView = itemView.findViewById(R.id.tvPropertyName)
             val tvPropertyImage: ImageView = itemView.findViewById(R.id.tvPropertyImage)
             val tvDetail: TextView = itemView.findViewById(R.id.tvDetail)
-            val ivShortlist: ImageView = itemView.findViewById(R.id.ivShortlist)
+            //val ivShortlist: ImageView = itemView.findViewById(R.id.ivShortlist)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RentalsViewHolder {
@@ -43,8 +43,7 @@ class RentalsAdapter (
             val res = context.resources.getIdentifier(property.imageURL, "drawable", context.packageName)
             val tvPropertyImage = holder.itemView.findViewById<ImageView>(R.id.tvPropertyImage)
             tvPropertyImage.setImageResource(res)
-            //Picasso.get().load(property.imageURL).into(holder.tvPropertyImage)
-            holder.ivShortlist.visibility = View.VISIBLE
+            //holder.ivShortlist.visibility = View.VISIBLE
             // Set click listener
             holder.itemView.setOnClickListener{
                 itemClickListener.invoke(position)
