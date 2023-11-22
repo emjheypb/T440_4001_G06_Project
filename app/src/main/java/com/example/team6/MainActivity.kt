@@ -121,24 +121,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleLoginButtoncClick() {
-        clickCount++
         val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
         Log.d("Login Status for loginRegisterButton", "$isLoggedIn")
 
-        if (!isLoggedIn && clickCount == 1) {
-            // First click
-            startActivity(Intent(this, LoginActivity::class.java))
-        } else if (isLoggedIn && clickCount == 2) {
-            // Second click, perform logout logic
-            clickCount = 0 // Reset click count for future clicks
-            sharedPreferences.edit().putBoolean("IS_LOGGED_IN", false).apply()
-            sharedPreferences.edit().remove(SharedPrefRef.CURRENT_USER.value).apply()
-
+        if (isLoggedIn) {
             // Update UI
-            binding.loginRegisterButton.text = "Login/Register"
-            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, MainActivity::class.java))
+            binding.loginRegisterButton.visibility = View.GONE
 
+        } else {
+            // User is not logged in, open the login screen
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 
