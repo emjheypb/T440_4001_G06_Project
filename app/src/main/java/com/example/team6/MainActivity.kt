@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import com.example.team6.databinding.ActivityMainBinding
 import android.content.SharedPreferences
+import android.os.Handler
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.Toast
 import com.example.team6.enums.MembershipType
 import com.example.team6.enums.PropertyType
 import com.example.team6.models.ContactDetails

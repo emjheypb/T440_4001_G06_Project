@@ -66,11 +66,10 @@ class ShortListedActivity : AppCompatActivity() {
 
         // Retrieve logged-in user from SharedPreferences
         val loggedInUserFromSP = sharedPreferences.getString("LOGGED_IN_USER", "")
-        val loggedInUser: User = gson.fromJson(loggedInUserFromSP, User::class.java)
-
 
         // Check for null before accessing user membership
-        if (loggedInUser != null) {
+        if (loggedInUserFromSP!="") {
+            val loggedInUser: User = gson.fromJson(loggedInUserFromSP, User::class.java)
             Log.d("User: ", "$loggedInUser")
             val rentalFavs = loggedInUser.rentalFavs
 
@@ -82,6 +81,16 @@ class ShortListedActivity : AppCompatActivity() {
                 // Handle item click, e.g., show more details
                 showDetails(rentalFavs[position])
             }
+        }
+        else {
+            Toast.makeText(
+                this,
+                "LOGIN TO SHORTLIST!",
+                Toast.LENGTH_SHORT
+            ).show()
+            Handler().postDelayed(Runnable {
+                startActivity(Intent(this@ShortListedActivity, LoginActivity::class.java))
+            }, 1000)
         }
     }
 
