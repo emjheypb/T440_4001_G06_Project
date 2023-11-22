@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.core.view.isVisible
 import com.example.team6.enums.MembershipType
 import com.example.team6.enums.PropertyType
 import com.example.team6.models.ContactDetails
@@ -105,6 +106,11 @@ class MainActivity : AppCompatActivity() {
             // Handle login/register button click
             handleLoginButtoncClick()
         }
+    }
+
+    override fun onResume() {
+        binding.loginRegisterButton.isVisible = !sharedPreferences.getBoolean(SharedPrefRef.IS_LOGGED_IN.value,false)
+        super.onResume()
     }
 
     // Call this method when need to show PopupMenu
@@ -259,11 +265,16 @@ class MainActivity : AppCompatActivity() {
             prefEditor.apply()
         }
 
+
         val propertiesDS = sharedPreferences.getString(SharedPrefRef.PROPERTIES_LIST.value, "")
-        if (propertiesDS == "") {
-            val propertiesJSON = gson.toJson(datasource)
-            prefEditor.putString(SharedPrefRef.PROPERTIES_LIST.value, propertiesJSON)
-            prefEditor.apply()
+        if (propertiesDS != "") {
+            datasource.clear()
+            val propertiesToken = object : TypeToken<List<Rentals>>() {}.type
+            datasource.addAll(gson.fromJson<List<Rentals>>(propertiesDS, propertiesToken).toMutableList())
         }
+
+        val propertiesJSON = gson.toJson(datasource)
+        prefEditor.putString(SharedPrefRef.PROPERTIES_LIST.value, propertiesJSON)
+        prefEditor.apply()
     }
 }

@@ -21,14 +21,15 @@ class Rentals (
         val queryNum = query.toIntOrNull()
         if(queryNum!=null){
             val searchInstance =
-                propertyName.contains(query, ignoreCase = true)
+                (propertyName.contains(query, ignoreCase = true)
                         || city.contains(query, ignoreCase = true)
                         || address.contains(query, ignoreCase = true)
                         || postalCode.contains(query, ignoreCase = true)
                         || owner.name.contains(query, ignoreCase = true)
                         || specifications.bedrooms == (queryNum)
                         || specifications.bathrooms == (queryNum)
-                        || specifications.parkingLots == (queryNum)
+                        || specifications.parkingLots == (queryNum))
+                        && isAvailableForRent == true
             if(searchInstance){
                 Log.d("Rentals-Search", "Search Instance Existed for $query")
             } else {
@@ -37,11 +38,12 @@ class Rentals (
             return searchInstance
         } else {
             val searchInstance =
-                propertyName.contains(query, ignoreCase = true)
+                (propertyName.contains(query, ignoreCase = true)
                         || city.contains(query, ignoreCase = true)
                         || address.contains(query, ignoreCase = true)
                         || postalCode.contains(query, ignoreCase = true)
-                        || owner.name.contains(query, ignoreCase = true)
+                        || owner.name.contains(query, ignoreCase = true))
+                        && isAvailableForRent == true
             if(searchInstance){
                 Log.d("Rentals-Search", "Search Instance Existed for $query")
             } else {
