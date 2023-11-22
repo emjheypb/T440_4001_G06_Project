@@ -4,7 +4,13 @@
     <item
         android:id="@+id/mi_save"
         android:orderInCategory="100"
-        android:title="Home"
+        android:title="Save"
         android:icon="@drawable/round_save_24"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/mi_Delete_Property"
+        android:orderInCategory="100"
+        android:title="Delete"
+        android:icon="@drawable/baseline_delete_24"
         app:showAsAction="always" />
 </menu>

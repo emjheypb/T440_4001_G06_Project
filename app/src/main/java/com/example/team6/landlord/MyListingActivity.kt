@@ -49,8 +49,13 @@ class MyListingActivity : AppCompatActivity() {
                         intent.getSerializableExtra(ExtrasRef.CURR_PROPERTY.description) as Rentals
                     }
                     val pos = intent.getIntExtra(ExtrasRef.ROW.description, -1)
-                    if(pos == -1) myListings.add(updatedObject!!)
-                    else myListings.set(pos, updatedObject!!)
+                    val del = intent.getBooleanExtra(ExtrasRef.DEL_FLAG.description, false)
+
+                    if(del) myListings.removeAt(pos)
+                    else {
+                        if (pos == -1) myListings.add(updatedObject!!)
+                        else myListings.set(pos, updatedObject!!)
+                    }
                     adapter.notifyDataSetChanged()
                 }
             }

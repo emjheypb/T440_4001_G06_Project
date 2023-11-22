@@ -11,7 +11,9 @@ import android.content.Intent
 import android.os.Build
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
+import androidx.core.view.get
 import com.example.team6.databinding.ActivityPropertyDetailsBinding
 import com.example.team6.enums.ExtrasRef
 import com.example.team6.enums.PropertyType
@@ -20,6 +22,7 @@ import com.example.team6.models.Landlord
 import com.example.team6.models.PropertySpecifications
 import com.example.team6.models.Rentals
 import com.example.team6.models.User
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -88,60 +91,97 @@ class PropertyDetailsActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.mi_save) {
-            var isError = false
-
-            val address = this.binding.etAddress.text.toString()
-            if(address == "") {
-                isError = true
-                this.binding.etAddress.error = "Required Field"
+        when(item.itemId) {
+            R.id.mi_Delete_Property -> {
+                if(position == -1) {
+                    Snackbar.make(this.binding.root, "INVALID ACTION", Snackbar.LENGTH_SHORT).show()
+                    return false
+                }
+                saveProperty(null, position)
+                intent.putExtra(ExtrasRef.ROW.description, position)
+                intent.putExtra(ExtrasRef.DEL_FLAG.description, true)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+                return true
             }
-            val city = this.binding.etCity.text.toString()
-            if(city == "") {
-                isError = true
-                this.binding.etCity.error = "Required Field"
+            R.id.mi_save -> {
+                var isError = false
+
+                val address = this.binding.etAddress.text.toString()
+                if (address == "") {
+                    isError = true
+                    this.binding.etAddress.error = "Required Field"
+                }
+                val city = this.binding.etCity.text.toString()
+                if (city == "") {
+                    isError = true
+                    this.binding.etCity.error = "Required Field"
+                }
+                val postCode = this.binding.etPostalCode.text.toString()
+                if (postCode == "") {
+                    isError = true
+                    this.binding.etPostalCode.error = "Required Field"
+                }
+                val type = PropertyType.valueOf(
+                    this.binding.spinnerType.selectedItem.toString().uppercase()
+                )
+                val description = this.binding.etDescription.text.toString()
+                val isAvailable = this.binding.swIsRented.isChecked
+                val propertyName = "$address, $city, $postCode"
+                val bedrooms = this.binding.etBedrooms.text.toString().toIntOrNull() ?: 0
+                val bathrooms = this.binding.etBathrooms.text.toString().toIntOrNull() ?: 0
+                val parking = this.binding.etParking.text.toString().toIntOrNull() ?: 0
+                val specifications = PropertySpecifications(bedrooms, bathrooms, parking)
+                val currUser = gson.fromJson(
+                    this.sharedPreferences.getString(
+                        SharedPrefRef.CURRENT_USER.value,
+                        null
+                    ), User::class.java
+                )
+
+                if (isError) return false
+
+                val propertyToAdd = Rentals(
+                    type,
+                    currUser,
+                    propertyName,
+                    property.imageURL,
+                    specifications,
+                    description,
+                    address,
+                    postCode,
+                    city,
+                    isAvailable
+                )
+                saveProperty(propertyToAdd, position)
+
+                intent.putExtra(ExtrasRef.CURR_PROPERTY.description, propertyToAdd)
+                intent.putExtra(ExtrasRef.ROW.description, position)
+                intent.putExtra(ExtrasRef.DEL_FLAG.description, false)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+                return true
             }
-            val postCode = this.binding.etPostalCode.text.toString()
-            if(postCode == "") {
-                isError = true
-                this.binding.etPostalCode.error = "Required Field"
-            }
-            val type = PropertyType.valueOf(this.binding.spinnerType.selectedItem.toString().uppercase())
-            val description = this.binding.etDescription.text.toString()
-            val isAvailable = this.binding.swIsRented.isChecked
-            val propertyName = "$address, $city, $postCode"
-            val bedrooms = this.binding.etBedrooms.text.toString().toIntOrNull() ?: 0
-            val bathrooms = this.binding.etBathrooms.text.toString().toIntOrNull() ?: 0
-            val parking = this.binding.etParking.text.toString().toIntOrNull() ?: 0
-            val specifications = PropertySpecifications(bedrooms, bathrooms, parking)
-            val currUser = gson.fromJson(this.sharedPreferences.getString(SharedPrefRef.CURRENT_USER.value, null), User::class.java)
-
-            if (isError) return false
-
-            val propertyToAdd = Rentals(type, currUser, propertyName, property.imageURL, specifications, description, address, postCode, city, isAvailable)
-            saveProperty(propertyToAdd, position)
-
-            intent.putExtra(ExtrasRef.CURR_PROPERTY.description, propertyToAdd)
-            intent.putExtra(ExtrasRef.ROW.description, position)
-            setResult(Activity.RESULT_OK, intent)
-            finish()
-            return true
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    private fun saveProperty(propertyToAdd: Rentals, pos: Int) {
+    private fun saveProperty(propertyToAdd: Rentals?, pos: Int) {
         val propertiesDS = this.sharedPreferences.getString(SharedPrefRef.PROPERTIES_LIST.value, "")
         var myListings = mutableListOf<Rentals>()
         val typeToken = object : TypeToken<List<Rentals>>() {}.type
         if (propertiesDS != "") myListings.addAll(gson.fromJson<List<Rentals>>(propertiesDS, typeToken).toMutableList())
 
-        if(pos == -1) {
-            myListings.add(propertyToAdd)
-        } else {
+        if (propertyToAdd == null) {
             myListings.removeAt(pos)
-            myListings.add(pos, propertyToAdd)
+        } else {
+            if (pos == -1) {
+                myListings.add(propertyToAdd)
+            } else {
+                myListings.removeAt(pos)
+                myListings.add(pos, propertyToAdd)
+            }
         }
 
         val myListingJSON = gson.toJson(myListings)
