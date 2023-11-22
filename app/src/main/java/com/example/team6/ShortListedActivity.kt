@@ -82,16 +82,6 @@ class ShortListedActivity : AppCompatActivity() {
                 showDetails(rentalFavs[position])
             }
         }
-        else {
-            Toast.makeText(
-                this,
-                "LOGIN TO SHORTLIST!",
-                Toast.LENGTH_SHORT
-            ).show()
-            Handler().postDelayed(Runnable {
-                startActivity(Intent(this@ShortListedActivity, LoginActivity::class.java))
-            }, 1000)
-        }
     }
 
     private fun setupRecyclerView(rentalFavs:MutableList<Rentals>) {
@@ -215,17 +205,35 @@ class ShortListedActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.mi_shortlisted -> {
                     // Handle Shortlisted Listings click
-                    // For now, open a dummy shortlisted screen
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    val isLoggedIn = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+
+                    // Check for null before accessing user membership
+                    if (isLoggedIn) {
+                        startActivity(Intent(this, ShortListedActivity::class.java))
+                    }
+                    else {
+                        Toast.makeText(
+                            this,
+                            "LOGIN TO SHORTLIST!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Handler().postDelayed(Runnable {
+                            startActivity(Intent(this, LoginActivity::class.java))
+                        }, 1000)
+                    }
                     true
                 }
 
                 R.id.mi_addListings -> {
                     // Handle Post Listings click
-                    // For now, open a dummy post listings screen
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    Toast.makeText(
+                        this,
+                        "LOGIN AS LANDLORD TO POST!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Handler().postDelayed(Runnable {
+                        startActivity(Intent(this, LoginActivity::class.java))
+                    }, 1000)
                     true
                 }
 
