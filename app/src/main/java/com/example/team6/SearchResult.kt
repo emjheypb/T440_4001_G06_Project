@@ -10,14 +10,17 @@ import com.example.team6.databinding.ActivitySearchResultBinding
 import com.example.team6.models.Rentals
 import android.content.SharedPreferences
 import android.content.res.Resources
+import android.net.Uri
 import android.os.Handler
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import com.example.team6.enums.SharedPrefRef
 import com.example.team6.models.Landlord
 import com.example.team6.models.User
@@ -215,12 +218,33 @@ class SearchResult : AppCompatActivity() {
         val tvOwnerInfo: TextView = dialogView.findViewById(R.id.tvOwnerInfo)
         tvOwnerInfo.text = "Owner: ${property.owner.name}\nContact: ${property.owner.email}, ${property.owner.phoneNumber}"
 
+        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+        Log.d("LOGGED IN?", "$isLoggedIn")
+
+        if(isLoggedIn){
+            val btnContact : Button = dialogView.findViewById(R.id.btn_contact)
+            btnContact.isVisible=true
+            btnContact.setOnClickListener {
+                Log.d("EMAIL", "Attempting to send mail")
+                val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:") //look for only applications that can send emails
+                    putExtra(Intent.EXTRA_EMAIL, "${property.owner.email}")
+                    putExtra(Intent.EXTRA_SUBJECT, "Rental Inquiry")
+                    putExtra(Intent.EXTRA_TEXT, "Hi, I am interested in this property!")
+                }
+
+                if (emailIntent.resolveActivity(packageManager) != null){
+                    startActivity(emailIntent)
+                }
+
+            }
+        }
+
         // Set shortlist click listener
         val ivShortlistDialog: ImageView = dialogView.findViewById(R.id.ivShortlistDialog)
         ivShortlistDialog.setOnClickListener {
             //validate if user is logged in, if yes then update the sharedpref to save the property in favorites
-            val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
-            Log.d("LOGGED IN?", "$isLoggedIn")
+
 
             if(isLoggedIn){
                 val gson = Gson()
