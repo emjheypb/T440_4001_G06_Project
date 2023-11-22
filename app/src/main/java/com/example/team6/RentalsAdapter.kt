@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.team6.models.Rentals
-import com.squareup.picasso.Picasso
 
 
 

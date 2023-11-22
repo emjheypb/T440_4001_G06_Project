@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
     private val gson = Gson()
 
     private val sampleLandlord = User("Meridian Condo", "meridian@rent.com","012-345-6789", "mer1d1an", MembershipType.LANDLORD, mutableListOf())
-
     private var datasource: MutableList<Rentals> = mutableListOf<Rentals>(
         Rentals(
             propertyType = PropertyType.CONDO,
@@ -154,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.mi_shortlisted -> {
                     // Handle Shortlisted Listings click
                     // For now, open a dummy shortlisted screen
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, ShortListedActivity::class.java))
                     finish()
                     true
                 }
