@@ -70,10 +70,11 @@ class ShortListedActivity : AppCompatActivity() {
 
         // Check for null before accessing user membership
         if (loggedInUser != null) {
+            Log.d("User: ", "$loggedInUser")
             val rentalFavs = loggedInUser.rentalFavs
 
             // Setup RecyclerView
-            setupRecyclerView()
+            setupRecyclerView(rentalFavs)
 
             // Click listener to show more details when a row is clicked
             binding.rv.addOnItemClickListener { position, _ ->
@@ -83,9 +84,9 @@ class ShortListedActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupRecyclerView() {
+    private fun setupRecyclerView(rentalFavs:MutableList<Rentals>) {
         binding.rv.layoutManager = LinearLayoutManager(this)
-        binding.rv.adapter = RentalsAdapter(rentalFavs) { position ->
+        binding.rv.adapter = ShortlistedAdapter(rentalFavs) { position ->
             // Handle item click here, if needed
             showDetails(rentalFavs[position])
         }
