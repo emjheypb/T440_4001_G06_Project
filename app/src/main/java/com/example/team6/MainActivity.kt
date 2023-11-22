@@ -9,6 +9,7 @@ import android.content.SharedPreferences
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.Toast
 import com.example.team6.enums.MembershipType
 import com.example.team6.enums.PropertyType
 import com.example.team6.models.ContactDetails
@@ -139,6 +140,7 @@ class MainActivity : AppCompatActivity() {
 
     // Add the following method to show PopupMenu
     private fun showPopupMenu(view: View) {
+        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
         val popupMenu = PopupMenu(this, view)
         val user = gson.fromJson(this.sharedPreferences.getString(SharedPrefRef.CURRENT_USER.value, ""), User::class.java)
 
@@ -181,7 +183,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Show the PopupMenu
-        popupMenu.show()
+        if (isLoggedIn) {
+            val popupMenu = PopupMenu(this, view)
+            // Rest of your code for inflating and handling menu items
+            popupMenu.show()
+        } else {
+            // User is not logged in, handle accordingly
+            Toast.makeText(this, "Please log in to access this feature", Toast.LENGTH_SHORT).show()
+            // You might want to redirect the user to the login screen
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
     }
 
     private fun refreshSamples() {
