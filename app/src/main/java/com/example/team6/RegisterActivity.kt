@@ -43,7 +43,7 @@ class RegisterActivity : AppCompatActivity() {
             this.binding.tvError.setText("Error: All fields must be filled in!")
             return@registerUser
         }
-        val newUser = User(name, email, phoneNumber, password, MembershipType.valueOf(membership.uppercase()))
+        val newUser = User(name, email, phoneNumber, password, MembershipType.valueOf(membership.uppercase()), mutableListOf())
         val userListFromSP = sharedPreferences.getString("USER_LIST", "")
         if (userListFromSP != "") {
             // convert the string back into a fruit object
