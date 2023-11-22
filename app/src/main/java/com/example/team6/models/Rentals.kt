@@ -55,10 +55,15 @@ class Rentals (
         return Gson().toJson(this)
     }
 
+    override fun toString(): String {
+        return "Rentals(propertyType=$propertyType, owner=$owner, propertyName='$propertyName', imageURL='$imageURL', specifications=$specifications, description='$description', address='$address', postalCode='$postalCode', city='$city', isAvailableForRent=$isAvailableForRent)"
+    }
+
     companion object {
         // Function to create Rentals from JSON
         fun fromJson(json: String): Rentals {
             return Gson().fromJson(json, Rentals::class.java)
         }
     }
+
 }

@@ -16,6 +16,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.startActivity
 import com.example.team6.databinding.ActivityShortListedBinding
 import com.example.team6.enums.MembershipType
 import com.example.team6.enums.SharedPrefRef
@@ -65,15 +66,15 @@ class ShortListedActivity : AppCompatActivity() {
 
         // Retrieve logged-in user from SharedPreferences
         val loggedInUserFromSP = sharedPreferences.getString("LOGGED_IN_USER", "")
-        val loggedInUser: User = gson.fromJson(loggedInUserFromSP, User::class.java)
-
 
         // Check for null before accessing user membership
-        if (loggedInUser != null) {
+        if (loggedInUserFromSP!="") {
+            val loggedInUser: User = gson.fromJson(loggedInUserFromSP, User::class.java)
+            Log.d("User: ", "$loggedInUser")
             val rentalFavs = loggedInUser.rentalFavs
 
             // Setup RecyclerView
-            setupRecyclerView()
+            setupRecyclerView(rentalFavs)
 
             // Click listener to show more details when a row is clicked
             binding.rv.addOnItemClickListener { position, _ ->
@@ -83,12 +84,13 @@ class ShortListedActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupRecyclerView() {
+    private fun setupRecyclerView(rentalFavs:MutableList<Rentals>) {
         binding.rv.layoutManager = LinearLayoutManager(this)
-        binding.rv.adapter = RentalsAdapter(rentalFavs) { position ->
-            // Handle item click here, if needed
-            showDetails(rentalFavs[position])
-        }
+        binding.rv.adapter = ShortlistedAdapter(rentalFavs,
+            { position -> showDetails(rentalFavs[position]) },
+            { position -> removeFav(position)}
+        )
+
     }
 
     private fun RecyclerView.addOnItemClickListener(onClickListener: (position: Int, view: View) -> Unit) {
@@ -104,6 +106,38 @@ class ShortListedActivity : AppCompatActivity() {
                 // Implement if needed
             }
         })
+    }
+
+    private fun removeFav(position: Int){
+        val gson = Gson()
+        val loggedInUserFromSP = sharedPreferences.getString("LOGGED_IN_USER", "")
+        val loggedInUser : User = gson.fromJson(loggedInUserFromSP, User::class.java)
+
+        val userListFromSP = sharedPreferences.getString("USER_LIST", "")
+        val typeToken = object : TypeToken<MutableList<User>>(){}.type
+        val userList = gson.fromJson<MutableList<User>>(userListFromSP, typeToken)
+
+        for(u in userList){
+            if(u.email==loggedInUser.email) {
+                u.rentalFavs.removeAt(position)
+                loggedInUser.rentalFavs.removeAt(position)
+                break
+            }
+        }
+        val loggedInUserUpdated = gson.toJson(loggedInUser)
+        this.prefEditor.putString("LOGGED_IN_USER", loggedInUserUpdated)
+        val userListUpdated = gson.toJson(userList)
+        this.prefEditor.putString("USER_LIST", userListUpdated)
+        this.prefEditor.apply()
+        Toast.makeText(
+            this,
+            "Removed From Favorites!",
+            Toast.LENGTH_SHORT
+        ).show()
+        Handler().postDelayed(Runnable {
+            finish()
+            startActivity(Intent(this, ShortListedActivity::class.java))
+        }, 1000)
     }
 
     private fun showDetails(property: Rentals) {
@@ -171,17 +205,35 @@ class ShortListedActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.mi_shortlisted -> {
                     // Handle Shortlisted Listings click
-                    // For now, open a dummy shortlisted screen
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    val isLoggedIn = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+
+                    // Check for null before accessing user membership
+                    if (isLoggedIn) {
+                        startActivity(Intent(this, ShortListedActivity::class.java))
+                    }
+                    else {
+                        Toast.makeText(
+                            this,
+                            "LOGIN TO SHORTLIST!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Handler().postDelayed(Runnable {
+                            startActivity(Intent(this, LoginActivity::class.java))
+                        }, 1000)
+                    }
                     true
                 }
 
                 R.id.mi_addListings -> {
                     // Handle Post Listings click
-                    // For now, open a dummy post listings screen
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    Toast.makeText(
+                        this,
+                        "LOGIN AS LANDLORD TO POST!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Handler().postDelayed(Runnable {
+                        startActivity(Intent(this, LoginActivity::class.java))
+                    }, 1000)
                     true
                 }
 

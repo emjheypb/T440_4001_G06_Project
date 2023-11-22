@@ -65,6 +65,6 @@ class RegisterActivity : AppCompatActivity() {
         }
         val snackbar  = Snackbar.make(binding.root, "REGISTERED SUCCESSFULLY", Snackbar.LENGTH_SHORT)
         snackbar.show()
-        Handler().postDelayed(Runnable { finish() }, 2000)
+        Handler().postDelayed(Runnable { finish() }, 1000)
     }
 }

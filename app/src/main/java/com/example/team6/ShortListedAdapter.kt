@@ -47,9 +47,7 @@ class ShortlistedAdapter(
         holder.itemView.setOnClickListener {
             itemClickListener.invoke(position)
         }
-
-        // Set click listener for delete button click
-        holder.deleteButton.setOnClickListener {
+        holder.deleteButton.setOnClickListener{
             deleteButtonClickListener.invoke(position)
         }
     }
