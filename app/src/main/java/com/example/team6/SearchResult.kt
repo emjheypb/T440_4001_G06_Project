@@ -52,7 +52,7 @@ class SearchResult : AppCompatActivity() {
         }
 
         // Retrieve the list of strings from SharedPreferences
-        val sharedPreferences = getSharedPreferences("FILTERED_LIST", MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("MY_APP_PREFS", MODE_PRIVATE)
         val rentalPropertyStringList: String? = sharedPreferences.getString("FILTERED_LIST", "")
         Log.d("SearchResult", "Filtered List from SharedPreferences: $rentalPropertyStringList")
 
