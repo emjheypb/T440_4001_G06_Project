@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         // Set up click listeners for toolbar items
         binding.menuIcon.setOnClickListener {
             // Handle menu icon click
-            showPopupMenu(it)
+            showPopupMenuOnClick(it)
         }
 
         binding.teamNameTextView.setOnClickListener {
@@ -103,7 +103,32 @@ class MainActivity : AppCompatActivity() {
 
         binding.loginRegisterButton.setOnClickListener {
             // Handle login/register button click
-            // For now, open a dummy login screen
+            handleLoginButtoncClick()
+        }
+    }
+
+    // Call this method when need to show PopupMenu
+    private fun showPopupMenuOnClick(view: View) {
+        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+        Log.d("PopUp Logged_IN", "$isLoggedIn")
+        if (isLoggedIn) {
+            showPopupMenu(view)
+        } else {
+            Toast.makeText(this, "Please log in to access this feature", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+    }
+
+    private fun handleLoginButtoncClick() {
+        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+        Log.d("Login Status for loginRegisterButton", "$isLoggedIn")
+
+        if (isLoggedIn) {
+            // Update UI
+            binding.loginRegisterButton.visibility = View.GONE
+
+        } else {
+            // User is not logged in, open the login screen
             startActivity(Intent(this, LoginActivity::class.java))
         }
     }
@@ -139,16 +164,25 @@ class MainActivity : AppCompatActivity() {
         Log.d("SearchLogic", "Sample Data: ${filteredList.take(3)}")
     }
 
-    // Add the following method to show PopupMenu
+    private fun handleLogout() {
+        this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
+        this.prefEditor.putBoolean("IS_LOGGED_IN", false)
+        this.prefEditor.apply()
+
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    // Logic to deal with PopupMenu with regard to login status
     private fun showPopupMenu(view: View) {
         val popupMenu = PopupMenu(this, view)
         val user = gson.fromJson(this.sharedPreferences.getString(SharedPrefRef.CURRENT_USER.value, ""), User::class.java)
-
-        if(user != null && user.membership == MembershipType.LANDLORD) {
+        if (user != null && user.membership == MembershipType.LANDLORD) {
             popupMenu.inflate(R.menu.menu_landlord_options)
+        } else {
+            popupMenu.inflate(R.menu.options_menu_items)
         }
-        else popupMenu.inflate(R.menu.options_menu_items)
-
         // Set up click listener for each menu item
         popupMenu.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
@@ -172,7 +206,6 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
-
                 R.id.mi_addListings -> {
                     // Handle Post Listings click
                     Toast.makeText(
@@ -185,7 +218,11 @@ class MainActivity : AppCompatActivity() {
                     }, 1000)
                     true
                 }
-
+                R.id.mi_logout -> {
+                    // Handle Logout click
+                    handleLogout()
+                    true
+                }
                 in Landlord().menuItems -> {
                     if(item.itemId == R.id.mi_ll_logout) {
                         this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
@@ -195,14 +232,9 @@ class MainActivity : AppCompatActivity() {
                     finish()
                     true
                 }
-
-                else -> false
-            }
-        }
-
+                else -> false }}
         // Show the PopupMenu
-        popupMenu.show()
-    }
+        popupMenu.show() }
 
     private fun refreshSamples() {
         val usersDS = sharedPreferences.getString(SharedPrefRef.USERS_LIST.value, "")
