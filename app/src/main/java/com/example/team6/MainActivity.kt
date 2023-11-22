@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
     lateinit var prefEditor: SharedPreferences.Editor
     private val gson = Gson()
-    private var clickCount = 0
 
     private val sampleLandlord = User("Meridian Condo", "meridian@rent.com","012-345-6789", "mer1d1an", MembershipType.LANDLORD, mutableListOf())
     private var datasource: MutableList<Rentals> = mutableListOf<Rentals>(
