@@ -173,7 +173,7 @@ class SearchResult : AppCompatActivity() {
 
         // Set owner information
         val tvOwnerInfo: TextView = dialogView.findViewById(R.id.tvOwnerInfo)
-        tvOwnerInfo.text = "Owner: ${property.ownerName}\nContact: ${property.ownerContactDetails.email}, ${property.ownerContactDetails.phoneNumber}"
+        tvOwnerInfo.text = "Owner: ${property.owner.name}\nContact: ${property.owner.email}, ${property.owner.phoneNumber}"
 
         // Set shortlist click listener
         val ivShortlistDialog: ImageView = dialogView.findViewById(R.id.ivShortlistDialog)
