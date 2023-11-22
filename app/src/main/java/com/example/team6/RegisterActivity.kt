@@ -4,6 +4,7 @@ import android.R
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
+import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.example.team6.databinding.ActivityRegisterBinding
