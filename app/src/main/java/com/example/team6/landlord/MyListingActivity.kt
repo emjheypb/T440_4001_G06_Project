@@ -39,11 +39,11 @@ class MyListingActivity : AppCompatActivity() {
             if (result.data != null) {
                 val intent : Intent = result.data!!
                 val updatedObject = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getSerializableExtra("TODO", Rentals :: class.java)
+                    intent.getSerializableExtra(ExtrasRef.CURR_PROPERTY.description, Rentals :: class.java)
                 } else {
-                    intent.getSerializableExtra("TODO") as Rentals
+                    intent.getSerializableExtra(ExtrasRef.CURR_PROPERTY.description) as Rentals
                 }
-                val pos = intent.getIntExtra("TODO_POS", -1)
+                val pos = intent.getIntExtra(ExtrasRef.ROW.description, -1)
                 myListings.set(pos, updatedObject!!)
                 adapter.notifyDataSetChanged()
             }

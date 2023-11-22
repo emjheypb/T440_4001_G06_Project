@@ -17,6 +17,14 @@
         android:id="@+id/rv_Properties"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         tools:listitem="@layout/row_layout_ll_my_listing"/>
+
+    <Button
+        android:id="@+id/btn_Add_Property"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ADD NEW PROPERTY"
+        android:layout_margin="8dp"/>
 
 </LinearLayout>
