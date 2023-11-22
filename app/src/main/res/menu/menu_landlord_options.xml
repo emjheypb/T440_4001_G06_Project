@@ -20,7 +20,8 @@
     <item
         android:id="@+id/mi_ll_account"
         android:orderInCategory="100"
-        android:title="My Account" />
+        android:title="My Account"
+        android:visible="false"/>
     <item
         android:id="@+id/mi_ll_logout"
         android:orderInCategory="100"

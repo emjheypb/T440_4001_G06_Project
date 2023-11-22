@@ -2,6 +2,7 @@ package com.example.team6.models
 
 import com.example.team6.MainActivity
 import com.example.team6.R
+import com.example.team6.ShortListedActivity
 import com.example.team6.landlord.MyListingActivity
 
 class Landlord {
@@ -11,7 +12,7 @@ class Landlord {
         when(id) {
             menuItems[0] -> return MainActivity::class.java
             menuItems[1] -> return MyListingActivity::class.java
-            menuItems[2] -> return MainActivity::class.java
+            menuItems[2] -> return ShortListedActivity::class.java
             menuItems[3] -> return MainActivity::class.java
             menuItems[4] -> return MainActivity::class.java
         }

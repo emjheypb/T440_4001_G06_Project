@@ -21,6 +21,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import com.example.team6.enums.MembershipType
 import com.example.team6.enums.SharedPrefRef
 import com.example.team6.models.Landlord
 import com.example.team6.models.User
@@ -102,7 +103,12 @@ class SearchResult : AppCompatActivity() {
     // Add the following method to show PopupMenu
     private fun showPopupMenu(view: View) {
         val popupMenu = PopupMenu(this, view)
-        popupMenu.inflate(R.menu.options_menu_items)
+        val user = Gson().fromJson(this.sharedPreferences.getString(SharedPrefRef.CURRENT_USER.value, ""), User::class.java)
+        if (user != null && user.membership == MembershipType.LANDLORD) {
+            popupMenu.inflate(R.menu.menu_landlord_options)
+        } else {
+            popupMenu.inflate(R.menu.options_menu_items)
+        }
 
         // Set up click listener for each menu item
         popupMenu.setOnMenuItemClickListener { item: MenuItem ->
@@ -140,9 +146,20 @@ class SearchResult : AppCompatActivity() {
                     }, 1000)
                     true
                 }
+                R.id.mi_logout -> {
+                    this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
+                    this.prefEditor.putBoolean("IS_LOGGED_IN", false)
+                    this.prefEditor.apply()
+
+                    Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                    true
+                }
                 in Landlord().menuItems -> {
                     if(item.itemId == R.id.mi_ll_logout) {
                         this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
+                        this.prefEditor.putBoolean("IS_LOGGED_IN", false)
                         this.prefEditor.apply()
                     }
                     startActivity(Intent(this, Landlord().redirect(item.itemId)))

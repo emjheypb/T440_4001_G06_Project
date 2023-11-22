@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.team6.R
 import com.example.team6.databinding.ActivityMyListingBinding
 import com.example.team6.enums.ExtrasRef
+import com.example.team6.enums.PropertyType
 import com.example.team6.enums.SharedPrefRef
 import com.example.team6.models.Landlord
+import com.example.team6.models.PropertySpecifications
 import com.example.team6.models.Rentals
 import com.example.team6.models.User
 import com.google.gson.Gson
@@ -33,22 +35,31 @@ class MyListingActivity : AppCompatActivity() {
     private lateinit var adapter: PropertyAdapter
     private val myListings = mutableListOf<Rentals>()
 
-    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            if (result.data != null) {
-                val intent : Intent = result.data!!
-                val updatedObject = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getSerializableExtra(ExtrasRef.CURR_PROPERTY.description, Rentals :: class.java)
-                } else {
-                    intent.getSerializableExtra(ExtrasRef.CURR_PROPERTY.description) as Rentals
+    private val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                if (result.data != null) {
+                    val intent: Intent = result.data!!
+                    val updatedObject = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getSerializableExtra(
+                            ExtrasRef.CURR_PROPERTY.description,
+                            Rentals::class.java
+                        )
+                    } else {
+                        intent.getSerializableExtra(ExtrasRef.CURR_PROPERTY.description) as Rentals
+                    }
+                    val pos = intent.getIntExtra(ExtrasRef.ROW.description, -1)
+                    val del = intent.getBooleanExtra(ExtrasRef.DEL_FLAG.description, false)
+
+                    if(del) myListings.removeAt(pos)
+                    else {
+                        if (pos == -1) myListings.add(updatedObject!!)
+                        else myListings.set(pos, updatedObject!!)
+                    }
+                    adapter.notifyDataSetChanged()
                 }
-                val pos = intent.getIntExtra(ExtrasRef.ROW.description, -1)
-                myListings.set(pos, updatedObject!!)
-                adapter.notifyDataSetChanged()
             }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,6 +102,26 @@ class MyListingActivity : AppCompatActivity() {
                 LinearLayoutManager.VERTICAL
             )
         )
+
+        this.binding.btnAddProperty.setOnClickListener {
+            val intent = Intent(this@MyListingActivity, PropertyDetailsActivity::class.java)
+            intent.putExtra(
+                ExtrasRef.CURR_PROPERTY.description,
+                Rentals(
+                    PropertyType.CONDO,
+                    user,
+                    "",
+                    "@drawable/ic_launcher_background",
+                    PropertySpecifications(0, 0, 0),
+                    "",
+                    "",
+                    "",
+                    "",
+                    true
+                )
+            )
+            startForResult.launch(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -105,6 +136,7 @@ class MyListingActivity : AppCompatActivity() {
         if (item.itemId in Landlord().menuItems) {
             if (item.itemId == R.id.mi_ll_logout) {
                 this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
+                this.prefEditor.putBoolean("IS_LOGGED_IN", false)
                 this.prefEditor.apply()
             }
 
