@@ -177,6 +177,7 @@ class MainActivity : AppCompatActivity() {
         for (user in registeredUsers) {
             if (user.email == sampleLandlord.email) {
                 userExists = true
+                break
             }
         }
 
