@@ -108,16 +108,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleLoginButtonClick() {
+    // Call this method when need to show PopupMenu
+    private fun showPopupMenuOnClick(view: View) {
         val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
-        Log.d("Login Status for loginRegisterButton", "$isLoggedIn")
-
+        Log.d("PopUp Logged_IN", "$isLoggedIn")
         if (isLoggedIn) {
-            // Update UI
-            binding.loginRegisterButton.text = "Logout"
+            showPopupMenu(view)
         } else {
-            // User is not logged in, open the login screen
-            binding.loginRegisterButton.text = "Login/Register"
+            Toast.makeText(this, "Please log in to access this feature", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, LoginActivity::class.java))
         }
     }
@@ -143,9 +141,6 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-
-
-
 
     private fun performSearch(query: String) {
         val filteredList = datasource.filter {
@@ -178,17 +173,25 @@ class MainActivity : AppCompatActivity() {
         Log.d("SearchLogic", "Sample Data: ${filteredList.take(3)}")
     }
 
+    private fun handleLogout() {
+        this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
+        this.prefEditor.putBoolean("IS_LOGGED_IN", false)
+        this.prefEditor.apply()
+
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
     // Logic to deal with PopupMenu with regard to login status
-    private fun showPopupMenu(view: View, isLoggedIn: Boolean) {
-        // Show the PopupMenu
-        if (isLoggedIn) { val popupMenu = PopupMenu(this, view)
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
         val user = gson.fromJson(this.sharedPreferences.getString(SharedPrefRef.CURRENT_USER.value, ""), User::class.java)
-
-        if(user != null && user.membership == MembershipType.LANDLORD) {
+        if (user != null && user.membership == MembershipType.LANDLORD) {
             popupMenu.inflate(R.menu.menu_landlord_options)
+        } else {
+            popupMenu.inflate(R.menu.options_menu_items)
         }
-        else popupMenu.inflate(R.menu.options_menu_items)
-
         // Set up click listener for each menu item
         popupMenu.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
@@ -199,7 +202,6 @@ class MainActivity : AppCompatActivity() {
                     finish()
                     true
                 }
-
                 R.id.mi_addListings -> {
                     // Handle Post Listings click
                     // For now, open a dummy post listings screen
@@ -207,7 +209,11 @@ class MainActivity : AppCompatActivity() {
                     finish()
                     true
                 }
-
+                R.id.mi_logout -> {
+                    // Handle Logout click
+                    handleLogout()
+                    true
+                }
                 in Landlord().menuItems -> {
                     if(item.itemId == R.id.mi_ll_logout) {
                         this.prefEditor.remove(SharedPrefRef.CURRENT_USER.value)
@@ -217,28 +223,9 @@ class MainActivity : AppCompatActivity() {
                     finish()
                     true
                 }
-
-                else -> false
-            }
-        }
-            // Rest of your code for inflating and handling menu items
-            popupMenu.show()
-        } else {
-            // User is not logged in, handle accordingly
-            Toast.makeText(this, "Please log in to access this feature", Toast.LENGTH_SHORT).show()
-            // You might want to redirect the user to the login screen
-            startActivity(Intent(this, LoginActivity::class.java))
-        }
-    }
-
-    // Call this method when need to show PopupMenu
-    private fun showPopupMenuOnClick(view: View) {
-        val isLoggedIn: Boolean = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
-        Log.d("PopUp Logged_IN","$isLoggedIn")
-        showPopupMenu(view, isLoggedIn)
-    }
-
-
+                else -> false }}
+        // Show the PopupMenu
+        popupMenu.show() }
 
     private fun refreshSamples() {
         val usersDS = sharedPreferences.getString(SharedPrefRef.USERS_LIST.value, "")

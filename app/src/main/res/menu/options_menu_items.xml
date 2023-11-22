@@ -8,4 +8,9 @@
         android:id="@+id/mi_addListings"
         android:orderInCategory="100"
         android:title="Post Listings" />
+
+    <item
+        android:id="@+id/mi_logout"
+        android:orderInCategory="100"
+        android:title="Logout" />
 </menu>
